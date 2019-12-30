@@ -11,6 +11,10 @@ namespace HedgeLib.Sets
         // Variables/Constants
         public BINAHeader Header = new BINAv1Header();
         public const string Extension = ".set";
+        public List<uint> groupIDs = new List<uint> { };
+        public List<string> groupNames = new List<string> { };
+        public List<string> groupTypes = new List<string> { };
+        public List<string> objGroupData = new List<string> { };
 
         // Methods
         public override void Load(Stream fileStream,
@@ -26,18 +30,51 @@ namespace HedgeLib.Sets
             uint groupLength = reader.ReadUInt32();
             uint groupOffset = reader.ReadUInt32();
 
+            //Groups
+            reader.JumpTo(groupOffset, false);
+            for (uint i = 0; i < groupLength; ++i)
+            {
+                //What we know so far:
+                //First 4 bytes is a name for the group (usually GroupHelperXX?)
+                //Second 4 bytes are the type? (according to LibS06), might be a second name (stuff like next_set/GroupHelperXX)?
+                //Third 4 bytes is the amount of objects in this group.
+                //Last 4 bytes is a list of the object IDs in this group.
+
+                uint nameOffset = reader.ReadUInt32(); //Name
+                uint typeOffset = reader.ReadUInt32(); //Type?
+                uint groupObjectCount = reader.ReadUInt32(); //Count
+                uint groupObjectOffset = reader.ReadUInt32(); //Address of Objects
+
+                string groupName = string.Empty;
+                string groupType = string.Empty;
+
+                long pos = reader.BaseStream.Position;
+
+                reader.JumpTo(nameOffset, false);
+                groupName = reader.ReadNullTerminatedString();
+                groupNames.Add(groupName);
+
+                reader.JumpTo(typeOffset, false);
+                groupType = reader.ReadNullTerminatedString();
+                groupTypes.Add(groupType);
+
+                reader.JumpTo(groupObjectOffset, false);
+                for (int c = 0; c < groupObjectCount; c++)
+                {
+                    reader.JumpAhead(4);
+                    uint objID = reader.ReadUInt32();
+                    objGroupData.Add($"{groupName}|{groupType}|{objID}");
+                    groupIDs.Add(objID);
+                }
+
+                reader.JumpTo(pos, true);
+            }
+
             // Data
             reader.JumpTo(objectOffset, false);
             for (uint i = 0; i < objectLength; ++i)
             {
                 Objects.Add(ReadObject(i));
-            }
-
-            // TODO: Read Groups
-            reader.JumpTo(groupOffset, false);
-            for (uint i = 0; i < groupLength; ++i)
-            {
-                //???
             }
 
             // TODO: Read Footer
@@ -75,6 +112,23 @@ namespace HedgeLib.Sets
                 reader.JumpTo(typeOffset, false);
                 obj.ObjectType = reader.ReadNullTerminatedString();
                 obj.ObjectID = id;
+
+                //Object Group
+                if (!groupIDs.Contains(id))
+                {
+                    obj.CustomData.Add("GroupName", new SetObjectParam(
+                                    typeof(string), ""));
+                    obj.CustomData.Add("GroupType", new SetObjectParam(
+                                    typeof(string), ""));
+                }
+                else
+                {
+                    string[] groupData = objGroupData[groupIDs.IndexOf(id)].Split('|');
+                    obj.CustomData.Add("GroupName", new SetObjectParam(
+                                    typeof(string), groupData[0]));
+                    obj.CustomData.Add("GroupType", new SetObjectParam(
+                                    typeof(string), groupData[1]));
+                }
 
                 reader.JumpTo(pos, true);
                 return obj;
