@@ -30,14 +30,20 @@ namespace HedgeLib.Sets
             reader.JumpTo(objectOffset, false);
             for (uint i = 0; i < objectLength; ++i)
             {
-                Objects.Add(ReadObject());
+                Objects.Add(ReadObject(i));
             }
 
             // TODO: Read Groups
+            reader.JumpTo(groupOffset, false);
+            for (uint i = 0; i < groupLength; ++i)
+            {
+                //???
+            }
+
             // TODO: Read Footer
 
             // Sub-Methods
-            SetObject ReadObject()
+            SetObject ReadObject(uint id)
             {
                 // Object Entry
                 var obj = new SetObject();
@@ -56,15 +62,19 @@ namespace HedgeLib.Sets
                 long pos = reader.BaseStream.Position;
                 for (uint i = 0; i < paramCount; ++i)
                 {
-                    reader.JumpTo(paramOffset + i*0x14, false);
+                    reader.JumpTo(paramOffset + i * 0x14, false);
                     obj.Parameters.Add(ReadParam());
                 }
 
-                // TODO: Read Object Name
+                // Object Name
+                reader.JumpTo(nameOffset, false);
+                obj.CustomData.Add("Name", new SetObjectParam(
+                                typeof(string), reader.ReadNullTerminatedString()));
 
                 // Object Type
                 reader.JumpTo(typeOffset, false);
                 obj.ObjectType = reader.ReadNullTerminatedString();
+                obj.ObjectID = id;
 
                 reader.JumpTo(pos, true);
                 return obj;
@@ -176,8 +186,15 @@ namespace HedgeLib.Sets
                 {
                     ++typeCounts[type];
                 }
+                string name = "";
+                if (obj.CustomData.ContainsKey("Name"))
+                    name = (obj.CustomData["Name"].Data as string);
 
-                writer.AddString($"nameOffset{id}", $"{type}{typeCounts[obj.ObjectType]}");
+                if (string.IsNullOrEmpty(name))
+                    writer.AddString($"nameOffset{id}", $"{type}{typeCounts[obj.ObjectType]}");
+                else
+                    writer.AddString($"nameOffset{id}", $"{name}");
+
                 writer.AddString($"typeOffset{id}", type);
                 writer.WriteNulls(16);
 
