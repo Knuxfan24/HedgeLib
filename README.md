@@ -1,3 +1,5 @@
+This is just a hacky fork with a very specific purpose that is willing to break everything else to achieve said purpose, pay no mind to it!
+
 ![HedgeLib Logo](Logo-small.png?raw=true)
 
 *(Thanks to [Gotta Play Fast](https://www.youtube.com/channel/UCZfOGBkXRKICFozWU5bE0Xg) for the wonderful project logo!)*
