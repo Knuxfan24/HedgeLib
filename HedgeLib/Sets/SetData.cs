@@ -11,6 +11,7 @@ namespace HedgeLib.Sets
     {
         // Variables/Constants
         public List<SetObject> Objects = new List<SetObject>();
+        public S06Group Groups = new S06Group();
         public string Name = null;
 
         // Methods

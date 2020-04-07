@@ -77,6 +77,7 @@
     <Compile Include="RFL\ForcesStageScore.cs" />
     <Compile Include="RFL\ForcesWorldmapDiscuss.cs" />
     <Compile Include="Sets\ForcesSetData.cs" />
+    <Compile Include="Sets\S06Group.cs" />
     <Compile Include="Sprites\ManiaSprite.cs" />
     <Compile Include="Archives\Archive.cs" />
     <Compile Include="Archives\ArchiveData.cs" />
