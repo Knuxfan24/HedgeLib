@@ -14,6 +14,8 @@ namespace HedgeLib.Sets
         public SetObjectTransform[] Children = new SetObjectTransform[0];
         public SetObjectTransform Transform = new SetObjectTransform();
 
+        public List<byte> unknownBytes = new List<byte>();
+
         public string ObjectType;
         public uint ObjectID;
 

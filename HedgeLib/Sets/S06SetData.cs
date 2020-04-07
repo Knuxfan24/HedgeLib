@@ -75,7 +75,39 @@ namespace HedgeLib.Sets
                 var obj = new SetObject();
                 uint nameOffset = reader.ReadUInt32();
                 uint typeOffset = reader.ReadUInt32();
-                reader.JumpAhead(16);
+                byte lol1 = reader.ReadByte();
+                byte lol2 = reader.ReadByte();
+                byte lol3 = reader.ReadByte();
+                byte lol4 = reader.ReadByte();
+                byte lol5 = reader.ReadByte();
+                byte lol6 = reader.ReadByte();
+                byte lol7 = reader.ReadByte();
+                byte lol8 = reader.ReadByte();
+                byte lol9 = reader.ReadByte();
+                byte lol10 = reader.ReadByte();
+                byte lol11 = reader.ReadByte();
+                byte lol12 = reader.ReadByte();
+                byte lol13 = reader.ReadByte();
+                byte lol14 = reader.ReadByte();
+                byte lol15 = reader.ReadByte();
+                byte lol16 = reader.ReadByte();
+
+                obj.unknownBytes.Add(lol1);
+                obj.unknownBytes.Add(lol2);
+                obj.unknownBytes.Add(lol3);
+                obj.unknownBytes.Add(lol4);
+                obj.unknownBytes.Add(lol5);
+                obj.unknownBytes.Add(lol6);
+                obj.unknownBytes.Add(lol7);
+                obj.unknownBytes.Add(lol8);
+                obj.unknownBytes.Add(lol9);
+                obj.unknownBytes.Add(lol10);
+                obj.unknownBytes.Add(lol11);
+                obj.unknownBytes.Add(lol12);
+                obj.unknownBytes.Add(lol13);
+                obj.unknownBytes.Add(lol14);
+                obj.unknownBytes.Add(lol15);
+                obj.unknownBytes.Add(lol16);
 
                 obj.Transform.Position = reader.ReadVector3();
                 reader.JumpAhead(4);
@@ -231,7 +263,10 @@ namespace HedgeLib.Sets
                     writer.AddString($"nameOffset{id}", $"{name}");
 
                 writer.AddString($"typeOffset{id}", type);
-                writer.WriteNulls(16);
+                foreach(byte unknown in obj.unknownBytes)
+                {
+                    writer.WriteByType<byte>(unknown);
+                }
 
                 writer.Write(obj.Transform.Position);
                 writer.Write(0);
@@ -313,6 +348,7 @@ namespace HedgeLib.Sets
                 {
                     writer.Write(0); //Not sure how to properly write eight bytes rather than four...
                     writer.Write(Groups[id].ObjectList[i] + 1);
+                    //writer.Write(Groups[id].ObjectList[i]);
                 }
             }
         }
