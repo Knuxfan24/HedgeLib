@@ -14,13 +14,14 @@ namespace HedgeLib.Sets
         public SetObjectTransform[] Children = new SetObjectTransform[0];
         public SetObjectTransform Transform = new SetObjectTransform();
 
-        public List<byte> unknownBytes = new List<byte>();
-
-        public string ObjectType;
         public uint ObjectID;
+        public string ObjectName;
+        public string ObjectType;
+        public byte[] UnknownBytes;
+        public float DrawDistance;
 
-		// Constructors
-		public SetObject() { }
+        // Constructors
+        public SetObject() { }
 		public SetObject(SetObjectType type, string typeName, uint objID)
 		{
 			ObjectType = typeName;
@@ -68,6 +69,9 @@ namespace HedgeLib.Sets
         // Variables/Constants
         public object Data;
         public Type DataType;
+        public uint Unknown1;
+        public uint Unknown2;
+        public uint Unknown3;
 
         // Constructors
         public SetObjectParam() { }

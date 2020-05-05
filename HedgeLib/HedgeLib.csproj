@@ -76,8 +76,9 @@
     <Compile Include="Quaternion.cs" />
     <Compile Include="RFL\ForcesStageScore.cs" />
     <Compile Include="RFL\ForcesWorldmapDiscuss.cs" />
+    <Compile Include="Sets\S06SetData.cs" />
     <Compile Include="Sets\ForcesSetData.cs" />
-    <Compile Include="Sets\S06Group.cs" />
+    <Compile Include="Sets\SetGroup.cs" />
     <Compile Include="Sprites\ManiaSprite.cs" />
     <Compile Include="Archives\Archive.cs" />
     <Compile Include="Archives\ArchiveData.cs" />
@@ -106,7 +107,7 @@
     <Compile Include="Sets\GensSetData.cs" />
     <Compile Include="Sets\HeroesSetData.cs" />
     <Compile Include="Sets\LWSetData.cs" />
-    <Compile Include="Sets\S06SetData.cs" />
+    <Compile Include="Sets\OldS06SetData.cs" />
     <Compile Include="Sets\SetData.cs" />
     <Compile Include="Sets\SetObject.cs" />
     <Compile Include="Sets\SetObjectType.cs" />
@@ -119,6 +120,8 @@
     <Compile Include="Textures\GensTexset.cs" />
     <Compile Include="Textures\GensTexture.cs" />
     <Compile Include="Textures\Texture.cs" />
+    <Compile Include="Text\MST.cs" />
+    <Compile Include="Text\MSTEntries.cs" />
     <Compile Include="Types.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="XMLHelpers.cs" />

@@ -278,7 +278,7 @@ namespace HedgeEdit
                     return new ColorsSetData();
 
                 case DataTypes.S06:
-                    return new S06SetData();
+                    return new OldS06SetData();
 
                 // TODO: Add Shadow Support
                 case DataTypes.Shadow:

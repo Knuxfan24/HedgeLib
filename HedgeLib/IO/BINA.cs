@@ -217,11 +217,11 @@ namespace HedgeLib.IO
         public void AddString(string offsetName, string str, uint offsetLength = 4)
         {
             if (string.IsNullOrEmpty(offsetName)) return;
-            if (string.IsNullOrEmpty(str))
-            {
-                WriteNulls(offsetLength);
-                return;
-            }
+            //if (string.IsNullOrEmpty(str))
+            //{
+            //    WriteNulls(offsetLength);
+            //    return;
+            //}
 
             var tableEntry = new StringTableEntry(str);
             bool newEntry = true;

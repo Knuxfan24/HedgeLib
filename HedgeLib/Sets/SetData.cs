@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 
 namespace HedgeLib.Sets
@@ -11,7 +12,7 @@ namespace HedgeLib.Sets
     {
         // Variables/Constants
         public List<SetObject> Objects = new List<SetObject>();
-        public S06Group Groups = new S06Group();
+        public List<SetGroup> Groups = new List<SetGroup>();
         public string Name = null;
 
         // Methods
@@ -52,6 +53,7 @@ namespace HedgeLib.Sets
         {
             // Load XML and add loaded data to set data
             var xml = XDocument.Load(fileStream);
+            Name = xml.Root.Attribute("name").Value;
             uint objID = 0; // For Object elements with no ID attribute.
 
             foreach (var objElem in xml.Root.Elements("Object"))
@@ -59,11 +61,13 @@ namespace HedgeLib.Sets
                 // Generate Object
                 var typeAttr = objElem.Attribute("type");
                 var objIDAttr = objElem.Attribute("id");
+                var objNameAttr = objElem.Attribute("name");
                 if (typeAttr == null) continue;
 
                 var obj = new SetObject()
                 {
                     ObjectType = typeAttr.Value,
+                    ObjectName = objNameAttr.Value,
                     ObjectID = (objIDAttr == null) ?
                         objID : Convert.ToUInt32(objIDAttr.Value),
                 };
@@ -78,6 +82,21 @@ namespace HedgeLib.Sets
                             LoadParam(customData));
                     }
                 }
+
+                //Assign Draw Distance to Object
+                var drawDistanceElem = objElem.Element("DrawDistance");
+                obj.DrawDistance = float.Parse(drawDistanceElem.Value);
+
+                //Assign Unknown Bytes ot object
+                var unknownBytesElem = objElem.Element("UnknownBytes");
+                int byteNumber = 0;
+                byte[] bytesXML = new byte[16];
+                foreach (var bytes in unknownBytesElem.Elements())
+                {
+                    bytesXML[byteNumber] = (byte)int.Parse(bytes.Value);
+                    byteNumber++;
+                }
+                obj.UnknownBytes = bytesXML;
 
                 // Assign Parameters to Object
                 var parametersElem = objElem.Element("Parameters");
@@ -122,8 +141,30 @@ namespace HedgeLib.Sets
                 Objects.Add(obj);
             }
 
-            // Sub-Methods
-            SetObjectParam LoadParam(XElement paramElem)
+            foreach (var groupElm in xml.Root.Elements("Group"))
+            {
+                var groupNameElem = groupElm.Element("Name");
+                var groupObjectCountElem = groupElm.Element("ObjectCount");
+                var groupTypeElem = groupElm.Element("Type");
+                var group = new SetGroup()
+                {
+                    GroupName = groupNameElem.Value,
+                    GroupObjectCount = uint.Parse(groupObjectCountElem.Value),
+                    GroupType = groupTypeElem.Value
+                };
+                var objectsElem = groupElm.Element("ObjectIDs");
+                if (objectsElem != null)
+                {
+                    foreach (var objectIDElem in objectsElem.Elements())
+                    {
+                        group.ObjectIDs.Add(uint.Parse(objectIDElem.Value));
+                    }
+                }
+                Groups.Add(group);
+            }
+
+                // Sub-Methods
+                SetObjectParam LoadParam(XElement paramElem)
             {
                 // Groups
                 var dataTypeAttr = paramElem.Attribute("type");
@@ -254,6 +295,8 @@ namespace HedgeLib.Sets
         {
             // Convert to XML file and save
             var rootElem = new XElement("SetData");
+            var setNameAttr = new XAttribute("name", Name);
+            rootElem.Add(setNameAttr);
 
             foreach (var obj in Objects)
             {
@@ -261,7 +304,16 @@ namespace HedgeLib.Sets
                 var objElem = new XElement("Object");
                 var typeAttr = new XAttribute("type", obj.ObjectType);
                 var objIDAttr = new XAttribute("id", obj.ObjectID);
+                var objNameAttr = new XAttribute("name", obj.ObjectName);
 
+                // Generate S06 Elements
+                var unknownBytesElem = new XElement("UnknownBytes");
+                for (uint i = 0; i < obj.UnknownBytes.Length; i++)
+                {
+                    var unknownBytesElemValue = new XElement($"UnknownByte{i}", obj.UnknownBytes[i]);
+                    unknownBytesElem.Add(unknownBytesElemValue);
+                }
+                var drawDistanceElem = new XElement("DrawDistance", obj.DrawDistance);
                 // Generate CustomData Element
                 var customDataElem = new XElement("CustomData");
                 foreach (var customData in obj.CustomData)
@@ -293,9 +345,25 @@ namespace HedgeLib.Sets
                 }
 
                 // Add all of this to the XDocument
-                objElem.Add(typeAttr, objIDAttr, customDataElem,
+                objElem.Add(typeAttr, objIDAttr, objNameAttr, unknownBytesElem, drawDistanceElem, customDataElem,
                     paramsElem, transformsElem);
                 rootElem.Add(objElem);
+            }
+
+            foreach (var group in Groups)
+            {
+                var groupElem = new XElement("Group");
+                var groupNameElem = new XElement($"Name", group.GroupName);
+                var groupTypeElem = new XElement($"Type", group.GroupType);
+                var groupObjectCountElem = new XElement($"ObjectCount", group.GroupObjectCount);
+                var objectIDsElem = new XElement("ObjectIDs");
+                for (int i = 0; i < group.ObjectIDs.Count; i++)
+                {
+                    var objectIDElem = new XElement($"ObjectID{i}", group.ObjectIDs[i]);
+                    objectIDsElem.Add(objectIDElem);
+                }
+                groupElem.Add(groupNameElem, groupTypeElem, groupObjectCountElem, objectIDsElem);
+                rootElem.Add(groupElem);
             }
 
             var xml = new XDocument(rootElem);
@@ -329,6 +397,10 @@ namespace HedgeLib.Sets
 
                 // Parameters
                 var dataType = param.DataType;
+                if (dataType == null)
+                {
+                    Console.ReadKey();
+                }
                 var dataTypeAttr = new XAttribute("type", dataType.Name);
                 if (dataType == typeof(ForcesSetData.ObjectReference))
                     dataTypeAttr.Value = "ForcesObjectReference";
