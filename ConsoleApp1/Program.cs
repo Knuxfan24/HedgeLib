@@ -6,35 +6,28 @@ using System.Threading.Tasks;
 using HedgeLib.Sets;
 using System.IO;
 using HedgeLib.Text;
+using HedgeLib.Misc;
 
 namespace ConsoleApp1
 {
-    /*class Program
-    {
-        static void Main(string[] args)
-        {
-            MST mst = new MST();
-            mst.Load(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\72300\4au4zd2f.ih2\text\xenon\text\english\msg_hint_xenon.e.mst");
-            foreach(var entry in mst.entries)
-            {
-                Console.WriteLine(entry.Text);
-            }
-            mst.ExportXML();
-        }
-    }*/
     class Program
     {
         static void Main(string[] args)
         {
-            S06SetData controlset = new S06SetData();
-            controlset.Load(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\95334\uogwixin.l3e\scripts\xenon\placement\wvo\set_wvoA_sonic.set");
-            controlset.ExportXML(@"Z:\test.xml");
-            controlset.Save(@"Z:\control.set", true);
+            S06SetData test = new S06SetData();
+            test.Load(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\22895\k2rdkvm1.l1l\scripts\xenon\placement\wvo\set_wvoA_sonic.set");
+            test.Save(@"Z:\test.set", true);
+            //S06Props prop = new S06Props();
+            //prop.Load(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\59666\pwtrmqr5.dco\game\xenon\actor_aquaticbase.prop");
+            /*var props = Directory.GetFiles(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\59666\pwtrmqr5.dco\game\xenon\", "*.prop", SearchOption.TopDirectoryOnly);
 
-            S06SetData set = new S06SetData();
-            set.Load(@"Z:\\control.set");
-            set.ExportXML(@"Z:\test2.xml");
-            //set.Save(@"Z:\test_xml.set", true);
+            foreach (var propFile in props)
+            {
+                S06Props prop = new S06Props();
+                prop.Load(propFile);
+                Console.WriteLine($"{Path.GetDirectoryName(propFile)}\\{Path.GetFileNameWithoutExtension(propFile)}.xml");
+                prop.ExportXML($"{Path.GetDirectoryName(propFile)}\\{Path.GetFileNameWithoutExtension(propFile)}.xml");
+            }*/
         }
     }
 }

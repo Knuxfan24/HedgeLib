@@ -87,7 +87,7 @@ namespace HedgeLib.Sets
                 var drawDistanceElem = objElem.Element("DrawDistance");
                 obj.DrawDistance = float.Parse(drawDistanceElem.Value);
 
-                //Assign Unknown Bytes ot object
+                //Assign Unknown Bytes to object
                 var unknownBytesElem = objElem.Element("UnknownBytes");
                 int byteNumber = 0;
                 byte[] bytesXML = new byte[16];

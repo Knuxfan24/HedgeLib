@@ -42,6 +42,8 @@ namespace HedgeLib.Sets
             SetObjectTransform[] children = null;
             uint? objID = null;
             float? range = null;
+            float? drawDistance = null;
+            string objName = "";
 
             if (elemName == null)
                 elemName = element.Name.LocalName;
@@ -56,8 +58,16 @@ namespace HedgeLib.Sets
                         transform.Position = paramElement.GetVector3();
                         continue;
 
-                    case "range":
-                        range = float.Parse(paramElement.Value);
+                    //case "range":
+                    //range = float.Parse(paramElement.Value);
+                    //continue;
+
+                    case "drawdistance":
+                        drawDistance = float.Parse(paramElement.Value);
+                        continue;
+
+                    case "objname":
+                        objName = paramElement.Value;
                         continue;
 
                     case "rotation":
@@ -69,42 +79,42 @@ namespace HedgeLib.Sets
                         continue;
 
                     case "multisetparam":
-                    {
-                        var countElem = paramElement.Element("Count");
-                        if (countElem == null) continue;
-
-                        if (!int.TryParse(countElem.Value, out var childCount)) continue;
-
-                        var childObjs = new List<SetObjectTransform>();
-                        foreach (var specialElem in paramElement.Elements())
                         {
-                            switch (specialElem.Name.LocalName.ToLower())
+                            var countElem = paramElement.Element("Count");
+                            if (countElem == null) continue;
+
+                            if (!int.TryParse(countElem.Value, out var childCount)) continue;
+
+                            var childObjs = new List<SetObjectTransform>();
+                            foreach (var specialElem in paramElement.Elements())
                             {
-                                case "element":
-                                    {
-                                        var indexElem = specialElem.Element("Index");
-                                        var posElem = specialElem.Element("Position");
-                                        var rotElem = specialElem.Element("Rotation");
-
-                                        if (indexElem == null || !int.TryParse(
-                                            indexElem.Value, out var index))
-                                            continue;
-
-                                        childObjs.Add(new SetObjectTransform()
+                                switch (specialElem.Name.LocalName.ToLower())
+                                {
+                                    case "element":
                                         {
-                                            Position = specialElem.GetVector3Elem("Position"),
-                                            Rotation = specialElem.GetQuatElem("Rotation")
-                                        });
-                                        break;
-                                    }
+                                            var indexElem = specialElem.Element("Index");
+                                            var posElem = specialElem.Element("Position");
+                                            var rotElem = specialElem.Element("Rotation");
 
-                                    // TODO: Parse other elements.
+                                            if (indexElem == null || !int.TryParse(
+                                                indexElem.Value, out var index))
+                                                continue;
+
+                                            childObjs.Add(new SetObjectTransform()
+                                            {
+                                                Position = specialElem.GetVector3Elem("Position"),
+                                                Rotation = specialElem.GetQuatElem("Rotation")
+                                            });
+                                            break;
+                                        }
+
+                                        // TODO: Parse other elements.
+                                }
                             }
-                        }
 
-                        children = childObjs.ToArray();
-                        continue;
-                    }
+                            children = childObjs.ToArray();
+                            continue;
+                        }
                 }
 
                 // Type
@@ -149,14 +159,57 @@ namespace HedgeLib.Sets
                 Parameters = parameters,
                 Transform = transform,
                 Children = children ?? new SetObjectTransform[0],
-                ObjectID = objID.Value
+                ObjectID = objID.Value,
+                ObjectName = objName
             };
 
-            if (range.HasValue)
+            //if (range.HasValue)
+            //{
+            //    obj.CustomData.Add("Range", new SetObjectParam(
+            //        typeof(float), range.Value));
+            //}
+
+            if (drawDistance.HasValue)
             {
-                obj.CustomData.Add("Range", new SetObjectParam(
-                    typeof(float), range.Value));
+                obj.DrawDistance = drawDistance.Value;
             }
+            else
+            {
+                obj.DrawDistance = 0;
+            }
+
+            //Assign Unknown Bytes to object
+            var unknownBytesElem = element.Element("UnknownBytes");
+            int byteNumber = 0;
+            byte[] bytesXML = new byte[16];
+            if (unknownBytesElem != null)
+            {
+                foreach (var bytes in unknownBytesElem.Elements())
+                {
+                    bytesXML[byteNumber] = (byte)int.Parse(bytes.Value);
+                    byteNumber++;
+                }
+            }
+            else
+            {
+                bytesXML[0] = 64;
+                bytesXML[1] = 0;
+                bytesXML[2] = 0;
+                bytesXML[3] = 0;
+                bytesXML[4] = 0;
+                bytesXML[5] = 0;
+                bytesXML[6] = 0;
+                bytesXML[7] = 0;
+                bytesXML[8] = 0;
+                bytesXML[9] = 0;
+                bytesXML[10] = 0;
+                bytesXML[11] = 0;
+                bytesXML[12] = 0;
+                bytesXML[13] = 0;
+                bytesXML[14] = 0;
+                bytesXML[15] = 0;
+            }
+            obj.UnknownBytes = bytesXML;
 
             return obj;
         }
@@ -246,13 +299,22 @@ namespace HedgeLib.Sets
             WriteTransform(obj.Transform, elem);
 
             // Special Parameters
-            elem.AddElem("Range", obj.GetCustomDataValue<float>("Range", 100));
+            //elem.AddElem("Range", obj.GetCustomDataValue<float>("Range", 100));
+            elem.AddElem("DrawDistance", obj.DrawDistance);
+            var unknownBytesElem = new XElement("UnknownBytes");
+            for (uint i = 0; i < obj.UnknownBytes.Length; i++)
+            {
+                var unknownBytesElemValue = new XElement($"UnknownByte{i}", obj.UnknownBytes[i]);
+                unknownBytesElem.Add(unknownBytesElemValue);
+            }
+            elem.Add(unknownBytesElem);
+            elem.AddElem("ObjName", obj.ObjectName);
             elem.AddElem("SetObjectID", obj.ObjectID);
 
             foreach (var customData in obj.CustomData)
             {
-                if (customData.Key == "Range")
-                    continue;
+                //if (customData.Key == "Range")
+                    //continue;
 
                 elem.Add(new XElement(
                     customData.Key, customData.Value));
