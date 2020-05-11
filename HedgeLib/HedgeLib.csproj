@@ -64,7 +64,10 @@
     <Compile Include="Headers\PACxHeader.cs" />
     <Compile Include="Materials\GensMaterial.cs" />
     <Compile Include="Math\AABB.cs" />
+    <Compile Include="Misc\CommonBIN.cs" />
     <Compile Include="Misc\ForcesGISM.cs" />
+    <Compile Include="Misc\PathObj.cs" />
+    <Compile Include="Misc\PathObjEntry.cs" />
     <Compile Include="Misc\S06Prop.cs" />
     <Compile Include="Misc\S06Props.cs" />
     <Compile Include="RFL\ForcesCaptionParam.cs" />

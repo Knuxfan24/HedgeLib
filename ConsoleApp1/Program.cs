@@ -14,9 +14,9 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            S06SetData test = new S06SetData();
-            test.Load(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\22895\k2rdkvm1.l1l\scripts\xenon\placement\wvo\set_wvoA_sonic.set");
-            test.Save(@"Z:\test.set", true);
+            CommonBIN common = new CommonBIN();
+            common.Load(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\75981\c0m0521e.y10\object\xenon\object\Common - copy.bin");
+
             //S06Props prop = new S06Props();
             //prop.Load(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\59666\pwtrmqr5.dco\game\xenon\actor_aquaticbase.prop");
             /*var props = Directory.GetFiles(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\59666\pwtrmqr5.dco\game\xenon\", "*.prop", SearchOption.TopDirectoryOnly);
