@@ -42,8 +42,8 @@ namespace HedgeLib.Sets
             SetObjectTransform[] children = null;
             uint? objID = null;
             float? range = null;
-            float? drawDistance = null;
-            string objName = "";
+            //float? drawDistance = null;
+            //string objName = "";
 
             if (elemName == null)
                 elemName = element.Name.LocalName;
@@ -62,13 +62,13 @@ namespace HedgeLib.Sets
                     //range = float.Parse(paramElement.Value);
                     //continue;
 
-                    case "drawdistance":
-                        drawDistance = float.Parse(paramElement.Value);
-                        continue;
+                    //case "drawdistance":
+                    //    drawDistance = float.Parse(paramElement.Value);
+                    //    continue;
 
-                    case "objname":
-                        objName = paramElement.Value;
-                        continue;
+                    //case "objname":
+                    //    objName = paramElement.Value;
+                    //    continue;
 
                     case "rotation":
                         transform.Rotation = paramElement.GetQuaternion();
@@ -160,7 +160,7 @@ namespace HedgeLib.Sets
                 Transform = transform,
                 Children = children ?? new SetObjectTransform[0],
                 ObjectID = objID.Value,
-                ObjectName = objName
+                //ObjectName = objName
             };
 
             //if (range.HasValue)
@@ -169,47 +169,47 @@ namespace HedgeLib.Sets
             //        typeof(float), range.Value));
             //}
 
-            if (drawDistance.HasValue)
-            {
-                obj.DrawDistance = drawDistance.Value;
-            }
-            else
-            {
-                obj.DrawDistance = 0;
-            }
+            //if (drawDistance.HasValue)
+            //{
+            //    obj.DrawDistance = drawDistance.Value;
+            //}
+            //else
+            //{
+            //    obj.DrawDistance = 0;
+            //}
 
             //Assign Unknown Bytes to object
-            var unknownBytesElem = element.Element("UnknownBytes");
-            int byteNumber = 0;
-            byte[] bytesXML = new byte[16];
-            if (unknownBytesElem != null)
-            {
-                foreach (var bytes in unknownBytesElem.Elements())
-                {
-                    bytesXML[byteNumber] = (byte)int.Parse(bytes.Value);
-                    byteNumber++;
-                }
-            }
-            else
-            {
-                bytesXML[0] = 64;
-                bytesXML[1] = 0;
-                bytesXML[2] = 0;
-                bytesXML[3] = 0;
-                bytesXML[4] = 0;
-                bytesXML[5] = 0;
-                bytesXML[6] = 0;
-                bytesXML[7] = 0;
-                bytesXML[8] = 0;
-                bytesXML[9] = 0;
-                bytesXML[10] = 0;
-                bytesXML[11] = 0;
-                bytesXML[12] = 0;
-                bytesXML[13] = 0;
-                bytesXML[14] = 0;
-                bytesXML[15] = 0;
-            }
-            obj.UnknownBytes = bytesXML;
+            //var unknownBytesElem = element.Element("UnknownBytes");
+            //int byteNumber = 0;
+            //byte[] bytesXML = new byte[16];
+            //if (unknownBytesElem != null)
+            //{
+            //    foreach (var bytes in unknownBytesElem.Elements())
+            //    {
+            //        bytesXML[byteNumber] = (byte)int.Parse(bytes.Value);
+            //        byteNumber++;
+            //    }
+            //}
+            //else
+            //{
+            //    bytesXML[0] = 64;
+            //    bytesXML[1] = 0;
+            //    bytesXML[2] = 0;
+            //    bytesXML[3] = 0;
+            //    bytesXML[4] = 0;
+            //    bytesXML[5] = 0;
+            //    bytesXML[6] = 0;
+            //    bytesXML[7] = 0;
+            //    bytesXML[8] = 0;
+            //    bytesXML[9] = 0;
+            //    bytesXML[10] = 0;
+            //    bytesXML[11] = 0;
+            //    bytesXML[12] = 0;
+            //    bytesXML[13] = 0;
+            //    bytesXML[14] = 0;
+            //    bytesXML[15] = 0;
+            //}
+            //obj.UnknownBytes = bytesXML;
 
             return obj;
         }
@@ -300,15 +300,15 @@ namespace HedgeLib.Sets
 
             // Special Parameters
             //elem.AddElem("Range", obj.GetCustomDataValue<float>("Range", 100));
-            elem.AddElem("DrawDistance", obj.DrawDistance);
-            var unknownBytesElem = new XElement("UnknownBytes");
-            for (uint i = 0; i < obj.UnknownBytes.Length; i++)
-            {
-                var unknownBytesElemValue = new XElement($"UnknownByte{i}", obj.UnknownBytes[i]);
-                unknownBytesElem.Add(unknownBytesElemValue);
-            }
-            elem.Add(unknownBytesElem);
-            elem.AddElem("ObjName", obj.ObjectName);
+            //elem.AddElem("DrawDistance", obj.DrawDistance);
+            //var unknownBytesElem = new XElement("UnknownBytes");
+            //for (uint i = 0; i < obj.UnknownBytes.Length; i++)
+            //{
+            //    var unknownBytesElemValue = new XElement($"UnknownByte{i}", obj.UnknownBytes[i]);
+            //    unknownBytesElem.Add(unknownBytesElemValue);
+            //}
+            //elem.Add(unknownBytesElem);
+            //elem.AddElem("ObjName", obj.ObjectName);
             elem.AddElem("SetObjectID", obj.ObjectID);
 
             foreach (var customData in obj.CustomData)

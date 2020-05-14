@@ -110,7 +110,7 @@ namespace HedgeLib.IO
         public string ReadNullTerminatedStringUTF16()
         {
             var sb = new StringBuilder();
-            var utf16 = Encoding.Unicode;
+            var utf16 = Encoding.BigEndianUnicode;
             var fs = BaseStream;
             long len = fs.Length;
 
@@ -566,7 +566,7 @@ namespace HedgeLib.IO
 
         public void WriteNullTerminatedStringUTF16(string value)
         {
-            Write(Encoding.Unicode.GetBytes(value));
+            Write(Encoding.BigEndianUnicode.GetBytes(value));
             dataBuffer[0] = dataBuffer[1] = 0;
             OutStream.Write(dataBuffer, 0, sizeof(ushort));
         }

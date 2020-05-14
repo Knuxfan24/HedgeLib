@@ -14,6 +14,7 @@ namespace HedgeLib.Text
     public class MST : FileBase
     {
         public BINAHeader Header = new BINAv1Header();
+        public string Name;
         public List<MSTEntries> entries = new List<MSTEntries>();
 
         public const string Signature = "WTXT", Extension = ".mst";
@@ -32,7 +33,12 @@ namespace HedgeLib.Text
             uint messageTableOffset = reader.ReadUInt32();
             uint messageCount = reader.ReadUInt32();
 
-            for(uint i = 0; i < messageCount; i++)
+            long namePos = reader.BaseStream.Position;
+            reader.JumpTo(messageTableOffset, false);
+            Name = reader.ReadNullTerminatedString();
+            reader.JumpTo(namePos, true);
+
+            for (uint i = 0; i < messageCount; i++)
             {
                 string name = string.Empty;
                 string text = string.Empty;
@@ -61,6 +67,30 @@ namespace HedgeLib.Text
             }
         }
 
+        public override void Save(Stream fileStream)
+        {
+            var writer = new BINAWriter(fileStream, Header);
+            char[] WTXTMagic = { 'W', 'T', 'X', 'T' };
+            writer.Write(WTXTMagic);
+            writer.AddString($"mstName", $"{Name}");
+            writer.Write(entries.Count);
+            for (int i = 0; i < entries.Count; i++)
+            {
+                writer.AddString($"nameOffset{i}", $"{entries[i].Name}");
+                writer.AddOffset($"textOffset{i}");
+                writer.AddOffset($"placeholderOffset{i}");
+            }
+            for (int i = 0; i < entries.Count; i++)
+            {
+                writer.FillInOffset($"textOffset{i}", false);
+                writer.WriteNullTerminatedStringUTF16(entries[i].Text);
+
+                writer.FillInOffset($"placeholderOffset{i}", false);
+                writer.WriteNullTerminatedString(entries[i].Placeholder);
+            }
+            writer.FinishWrite(Header);
+        }
+
         public void ExportXML()
         {
             var rootElem = new XElement("MST");
@@ -77,7 +107,7 @@ namespace HedgeLib.Text
             }
 
             var xml = new XDocument(rootElem);
-            xml.Save(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\72300\4au4zd2f.ih2\text\xenon\text\english\test.xml");
+            xml.Save(@"Z:\test.xml");
         }
     }
 }
