@@ -84,20 +84,27 @@ namespace HedgeLib.Text
             {
                 writer.FillInOffset($"textOffset{i}", false);
                 writer.WriteNullTerminatedStringUTF16(entries[i].Text);
-
+            }
+            for (int i = 0; i < entries.Count; i++)
+            {
                 writer.FillInOffset($"placeholderOffset{i}", false);
                 writer.WriteNullTerminatedString(entries[i].Placeholder);
             }
             writer.FinishWrite(Header);
         }
 
-        public void ExportXML()
+        public void ExportXML(string filePath)
         {
             var rootElem = new XElement("MST");
+            var rootNameAttr = new XAttribute("Name", Name);
+            rootElem.Add(rootNameAttr);
+
             int index = 0;
             foreach (var entry in entries)
             {
-                var message = new XElement("Message", entry.Text);
+                var text = entry.Text.Replace("\f", "\\f");
+                text = text.Replace("\n", "\\n");
+                var message = new XElement("Message", text);
                 var indexAttr = new XAttribute("Index", index);
                 var nameAttr = new XAttribute("Name", entry.Name);
                 var placeholderAttr = new XAttribute("Placeholder", entry.Placeholder);
@@ -107,7 +114,23 @@ namespace HedgeLib.Text
             }
 
             var xml = new XDocument(rootElem);
-            xml.Save(@"Z:\test.xml");
+            xml.Save(filePath);
+        }
+        public void ImportXML(string filepath)
+        {
+            var xml = XDocument.Load(filepath);
+            Name = xml.Root.Attribute("Name").Value;
+            foreach (var msgElement in xml.Root.Elements("Message"))
+            {
+                MSTEntries entry = new MSTEntries();
+                entry.Name = msgElement.Attribute("Name").Value;
+                entry.Placeholder = msgElement.Attribute("Placeholder").Value;
+                string entryText = msgElement.Value;
+                entryText = entryText.Replace("\\n", "\n");
+                entryText = entryText.Replace("\\f", "\f");
+                entry.Text = entryText;
+                entries.Add(entry);
+            }
         }
     }
 }
