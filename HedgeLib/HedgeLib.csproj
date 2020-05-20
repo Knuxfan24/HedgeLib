@@ -69,6 +69,7 @@
     <Compile Include="Misc\PathObj.cs" />
     <Compile Include="Misc\PathObjEntry.cs" />
     <Compile Include="Misc\S06Package.cs" />
+    <Compile Include="Misc\S06PackageRevised.cs" />
     <Compile Include="Misc\S06Prop.cs" />
     <Compile Include="Misc\S06Props.cs" />
     <Compile Include="RFL\ForcesCaptionParam.cs" />
