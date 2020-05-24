@@ -162,7 +162,14 @@ namespace HedgeLib.Sets
 
             // Header
             writer.WriteNulls(0xC);
-            writer.WriteNullTerminatedString(Name);
+            if (Name != null)
+            {
+                writer.WriteNullTerminatedString(Name);
+            }
+            else
+            {
+                writer.WriteNullTerminatedString("test");
+            }
             writer.WriteNulls(0x1B);
             writer.Write(Objects.Count);
             writer.AddOffset("objectTableOffset");
