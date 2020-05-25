@@ -104,5 +104,49 @@ namespace HedgeLib.Models
                 }
             }
         }
+    
+        public void ImportOBJ(string filepath)
+        {
+            var obj = File.ReadAllLines(filepath);
+            uint flags = 0;
+            foreach(var line in obj)
+            {
+                if (line.StartsWith("v "))
+                {
+                    var split = line.Split(' ');
+                    Vector3 vertex = new Vector3();
+                    vertex.X = float.Parse(split[2]);
+                    vertex.Y = float.Parse(split[3]);
+                    vertex.Z = float.Parse(split[4]);
+                    Vertices.Add(vertex);
+                }
+
+                if (line.StartsWith("g "))
+                {
+                    if (line.Contains("@"))
+                    {
+                        var temp = line.Substring(line.LastIndexOf('@') + 1);
+                        flags = (uint)Convert.ToInt32(temp, 16);
+                    }
+                    else if (line.Contains("_at_"))
+                    {
+                        var temp = line.Substring(line.LastIndexOf("_at_") + 4);
+                        flags = (uint)Convert.ToInt32(temp, 16);
+                    }
+                    else { flags = 0; }
+                }
+
+                if (line.StartsWith("f "))
+                {
+                    Face face = new Face();
+                    var split = line.Split(' ');
+                    if (split[1].Contains("/")) { face.Vertex1 = (ushort)(float.Parse(split[1].Substring(0, split[1].IndexOf('/'))) - 1f); }
+                    if (split[2].Contains("/")) { face.Vertex2 = (ushort)(float.Parse(split[2].Substring(0, split[2].IndexOf('/'))) - 1f); }
+                    if (split[3].Contains("/")) { face.Vertex3 = (ushort)(float.Parse(split[3].Substring(0, split[3].IndexOf('/'))) - 1f); }
+                    face.Flags = flags;
+                    Faces.Add(face);
+                }
+            }
+        }
     }
 }
