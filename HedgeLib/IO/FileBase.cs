@@ -33,7 +33,7 @@ namespace HedgeLib.IO
             throw new NotImplementedException();
         }
 
-        public virtual void Save(string filePath, bool overwrite = false)
+        public virtual void Save(string filePath, bool overwrite = true)
         {
             // Throw exceptions if necessary
             if (string.IsNullOrEmpty(filePath))

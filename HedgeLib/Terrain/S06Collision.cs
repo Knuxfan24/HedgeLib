@@ -4,16 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace HedgeLib.Models
+namespace HedgeLib.Terrain
 {
-    public class Face
+    public class S06CollisionFace
     {
         public ushort Vertex1;
         public ushort Vertex2;
         public ushort Vertex3;
         public uint Flags;
     }
-    public class S06Coli : FileBase
+    public class S06Collision : FileBase
     {
         public BINAHeader Header = new BINAv1Header();
 
@@ -25,7 +25,7 @@ namespace HedgeLib.Models
         uint FaceCount;
 
         public List<Vector3> Vertices = new List<Vector3>();
-        public List<Face> Faces = new List<Face>();
+        public List<S06CollisionFace> Faces = new List<S06CollisionFace>();
         public override void Load(Stream fileStream)
         {
             // Header
@@ -48,7 +48,7 @@ namespace HedgeLib.Models
             FaceCount = reader.ReadUInt32();
             for (int i = 0; i < FaceCount; i++)
             {
-                Face face = new Face();
+                S06CollisionFace face = new S06CollisionFace();
                 face.Vertex1 = reader.ReadUInt16();
                 face.Vertex2 = reader.ReadUInt16();
                 face.Vertex3 = reader.ReadUInt16();
@@ -138,7 +138,7 @@ namespace HedgeLib.Models
 
                 if (line.StartsWith("f "))
                 {
-                    Face face = new Face();
+                    S06CollisionFace face = new S06CollisionFace();
                     var split = line.Split(' ');
                     if (split[1].Contains("/")) { face.Vertex1 = (ushort)(float.Parse(split[1].Substring(0, split[1].IndexOf('/'))) - 1f); }
                     if (split[2].Contains("/")) { face.Vertex2 = (ushort)(float.Parse(split[2].Substring(0, split[2].IndexOf('/'))) - 1f); }
