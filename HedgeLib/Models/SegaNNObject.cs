@@ -30,7 +30,21 @@ namespace HedgeLib.Models
         public uint NodeLength;
         public uint EffectCount;
 
-        public List<string> Effects = new List<string>();
+        public List<EFFFILE> Effects = new List<EFFFILE>();
+        public List<TECHNAME> Techs = new List<TECHNAME>();
+    }
+
+    public class EFFFILE
+    {
+        public uint Type;
+        public string Filename;
+    }
+
+    public class TECHNAME
+    {
+        public uint Type;
+        public uint IDX; //???
+        public string Filename;
     }
 
     public class SegaNNObject : FileBase
@@ -82,6 +96,38 @@ namespace HedgeLib.Models
                 NodeLength = reader.ReadUInt32()
             };
 
+            pos = reader.BaseStream.Position; //Save Position
+            reader.JumpTo(reader.ReadUInt32() + 4, false);
+            var effectTypeCount = reader.ReadUInt32();
+            var effectTypeOffset = reader.ReadUInt32();
+            var techiqueCount = reader.ReadUInt32();
+            var techniqueOffset = reader.ReadUInt32();
+            reader.JumpTo(effectTypeOffset, false);
+            for(int i = 0; i < effectTypeCount; i++)
+            {
+                EFFFILE effFile = new EFFFILE();
+                effFile.Type = reader.ReadUInt32();
+                var jumpPoint = reader.ReadUInt32();
+                long effectPos = reader.BaseStream.Position; //Save Position
+                reader.JumpTo(jumpPoint, false);
+                effFile.Filename = reader.ReadNullTerminatedString();
+                reader.JumpTo(effectPos);
+                effectList.Effects.Add(effFile);
+            }
+            reader.JumpTo(techniqueOffset, false);
+            for (int i = 0; i < techiqueCount; i++)
+            {
+                TECHNAME tech = new TECHNAME();
+                tech.Type = reader.ReadUInt32();
+                tech.IDX = reader.ReadUInt32();
+                var jumpPoint = reader.ReadUInt32();
+                long techPos = reader.BaseStream.Position; //Save Position
+                reader.JumpTo(jumpPoint, false);
+                tech.Filename = reader.ReadNullTerminatedString();
+                reader.JumpTo(techPos);
+                effectList.Techs.Add(tech);
+            }
+            reader.JumpTo(pos);
 
 
             // NINJA XBOX NODE NAMES [NXNN]
