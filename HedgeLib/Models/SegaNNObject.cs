@@ -56,6 +56,7 @@ namespace HedgeLib.Models
                 NodeLength = reader.ReadUInt32()
             };
 
+            long pos = reader.BaseStream.Position; //Save Position
             reader.JumpTo(reader.ReadUInt32(), false);
             textureList.TextureCount = reader.ReadUInt32();
             uint textureListOffset = reader.ReadUInt32();
@@ -65,12 +66,14 @@ namespace HedgeLib.Models
             {
                 reader.JumpAhead(0x4);
                 uint textureNameOffset = reader.ReadUInt32();
-                long pos = reader.BaseStream.Position; //Save Position
+                long texturePos = reader.BaseStream.Position; //Save Position
                 reader.JumpTo(textureNameOffset, false);
                 textureList.Textures.Add(reader.ReadNullTerminatedString());
-                reader.JumpTo(pos);
+                reader.JumpTo(texturePos);
                 reader.JumpAhead(0xC);
             }
+            reader.JumpTo(pos);
+            reader.JumpAhead(textureList.NodeLength);
 
             // NINJA XBOX EFFECTS [NXEF]
             NXEF effectList = new NXEF()

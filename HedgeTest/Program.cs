@@ -12,7 +12,7 @@ namespace HedgeTest
         static void Main(string[] args)
         {
             SegaNNObject xno = new SegaNNObject();
-            xno.Load(@"C:\Users\gabe1\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\78988\1z2ovl5b.2zp\player_sonic\win32\player\sonic_new\so_itm_sbungle_L.xno");
+            xno.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\so_itm_sbungle_L.xno");
         }
     }
 }
