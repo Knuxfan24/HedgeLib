@@ -21,7 +21,14 @@ namespace HedgeLib.Models
         public uint NodeLength;
         public uint TextureCount;
 
-        public List<string> Textures = new List<string>();
+        public List<TEXFILE> Textures = new List<TEXFILE>();
+    }
+
+
+    public class TEXFILE
+    {
+        public string Filename;
+        public uint Filters;
     }
 
     public class NXEF
@@ -43,28 +50,46 @@ namespace HedgeLib.Models
     public class TECHNAME
     {
         public uint Type;
-        public uint IDX; //???
+        public uint NodeID; //??? Listed in the XTO for en_Kyozoress as
+        //	     0,     0,     0,     1,     1,     1,     1,     1,     1,     1,     1,     1,     2,     2,
         public string Filename;
+    }
+
+    public class NXNN
+    {
+        public string TreeNode;
+        public uint NodeLength;
+
+        public List<NodeTree> Nodes = new List<NodeTree>();
+    }
+    public class NodeTree
+    {
+        public uint NodeIndex;
+        public string NodeName;
     }
 
     public class SegaNNObject : FileBase
     {
+        public NXIF InfoList;
+        public NXTL TextureList;
+        public NXEF EffectList;
+        public NXNN NodeTree;
         public override void Load(Stream fileStream)
         {
             ExtendedBinaryReader reader = new ExtendedBinaryReader(fileStream) { Offset = 0x20 };
 
             // NINJA XBOX INFO [NXIF]
-            NXIF infoList = new NXIF()
+            InfoList = new NXIF()
             {
                 HeaderInfoNode = new string(reader.ReadChars(4)),
                 NodeLength = reader.ReadUInt32(),
                 NodeCount = reader.ReadUInt32()
             };
 
-            reader.JumpTo(infoList.NodeLength + 8);
+            reader.JumpTo(InfoList.NodeLength + 8);
 
             // NINJA XBOX TEXTURE LIST [NXTL]
-            NXTL textureList = new NXTL()
+            TextureList = new NXTL()
             {
                 TextureListNode = new string(reader.ReadChars(4)),
                 NodeLength = reader.ReadUInt32()
@@ -72,25 +97,28 @@ namespace HedgeLib.Models
 
             long pos = reader.BaseStream.Position; //Save Position
             reader.JumpTo(reader.ReadUInt32(), false);
-            textureList.TextureCount = reader.ReadUInt32();
+            TextureList.TextureCount = reader.ReadUInt32();
             uint textureListOffset = reader.ReadUInt32();
             reader.JumpTo(textureListOffset, false);
 
-            for (int i = 0; i < textureList.TextureCount; i++)
+            for (int i = 0; i < TextureList.TextureCount; i++)
             {
                 reader.JumpAhead(0x4);
                 uint textureNameOffset = reader.ReadUInt32();
                 long texturePos = reader.BaseStream.Position; //Save Position
                 reader.JumpTo(textureNameOffset, false);
-                textureList.Textures.Add(reader.ReadNullTerminatedString());
+                TEXFILE tex = new TEXFILE();
+                tex.Filename = reader.ReadNullTerminatedString();
                 reader.JumpTo(texturePos);
-                reader.JumpAhead(0xC);
+                tex.Filters = reader.ReadUInt32();
+                reader.JumpAhead(0x8);
+                TextureList.Textures.Add(tex);
             }
             reader.JumpTo(pos);
-            reader.JumpAhead(textureList.NodeLength);
+            reader.JumpAhead(TextureList.NodeLength);
 
             // NINJA XBOX EFFECTS [NXEF]
-            NXEF effectList = new NXEF()
+            EffectList = new NXEF()
             {
                 EffectNode = new string(reader.ReadChars(4)),
                 NodeLength = reader.ReadUInt32()
@@ -112,25 +140,48 @@ namespace HedgeLib.Models
                 reader.JumpTo(jumpPoint, false);
                 effFile.Filename = reader.ReadNullTerminatedString();
                 reader.JumpTo(effectPos);
-                effectList.Effects.Add(effFile);
+                EffectList.Effects.Add(effFile);
             }
             reader.JumpTo(techniqueOffset, false);
             for (int i = 0; i < techiqueCount; i++)
             {
                 TECHNAME tech = new TECHNAME();
                 tech.Type = reader.ReadUInt32();
-                tech.IDX = reader.ReadUInt32();
+                tech.NodeID = reader.ReadUInt32();
                 var jumpPoint = reader.ReadUInt32();
                 long techPos = reader.BaseStream.Position; //Save Position
                 reader.JumpTo(jumpPoint, false);
                 tech.Filename = reader.ReadNullTerminatedString();
                 reader.JumpTo(techPos);
-                effectList.Techs.Add(tech);
+                EffectList.Techs.Add(tech);
             }
             reader.JumpTo(pos);
-
+            reader.JumpAhead(EffectList.NodeLength);
 
             // NINJA XBOX NODE NAMES [NXNN]
+            NodeTree = new NXNN()
+            {
+                TreeNode = new string(reader.ReadChars(4)),
+                NodeLength = reader.ReadUInt32()
+            };
+
+            pos = reader.BaseStream.Position; //Save Position
+            reader.JumpTo(reader.ReadUInt32() + 4, false);
+            var nodeCount = reader.ReadUInt32();
+            reader.JumpTo(reader.ReadUInt32(), false);
+            for (int i = 0; i < nodeCount; i++)
+            {
+                NodeTree node = new NodeTree();
+                node.NodeIndex = reader.ReadUInt32();
+                var nameOffset = reader.ReadUInt32();
+                long nodePos = reader.BaseStream.Position; //Save Position
+                reader.JumpTo(nameOffset, false);
+                node.NodeName = reader.ReadNullTerminatedString();
+                reader.JumpTo(nodePos);
+                NodeTree.Nodes.Add(node);
+            }
+            reader.JumpTo(pos);
+            reader.JumpAhead(NodeTree.NodeLength);
 
             // NINJA XBOX OBJECTS [NXOB]
 
