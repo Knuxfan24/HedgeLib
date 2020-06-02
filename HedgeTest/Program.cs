@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HedgeLib.Models;
+using System.IO;
 
 namespace HedgeTest
 {
@@ -11,13 +12,73 @@ namespace HedgeTest
     {
         static void Main(string[] args)
         {
-            SegaNNObject xno = new SegaNNObject();
-            xno.Load(@"G:\Sonic '06\Extracted Files\win32\enemy_data\win32\enemy\secondmefiress\en_Kyozoress.xno");
-            foreach(var entry in xno.NodeTree.Nodes)
+            List<string> nodeNames = new List<string>();
+            nodeNames.Add("GN* Entries:");
+            var files = Directory.GetFiles(@"G:\Sonic Unleashed\Wii\Game Dump", "*.gn*", SearchOption.AllDirectories);
+            foreach (var file in files)
             {
-                Console.WriteLine(entry.NodeName);
+                if (!file.Contains("ncp"))
+                {
+                    Console.WriteLine(file);
+                    SegaNNLister xno = new SegaNNLister();
+                    xno.Load(file);
+                    foreach(var entry in xno.nodeNames)
+                    {
+                        if (!nodeNames.Contains(entry))
+                        {
+                            nodeNames.Add(entry);
+                        }
+                    }
+                }
             }
-            //xno.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\so_itm_sbungle_L.xno");
+
+            nodeNames.Add("\nZN* Entries:");
+            files = Directory.GetFiles(@"G:\Sonic 4\Episode 1\AMBs", "*.zn*", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                if (!file.Contains("ncp"))
+                {
+                    Console.WriteLine(file);
+                    SegaNNLister xno = new SegaNNLister();
+                    xno.Load(file);
+                    foreach (var entry in xno.nodeNames)
+                    {
+                        if (!nodeNames.Contains(entry))
+                        {
+                            nodeNames.Add(entry);
+                        }
+                    }
+                }
+            }
+
+            nodeNames.Add("\nXN* Entries:");
+            files = Directory.GetFiles(@"G:\Sonic '06\Extracted Files", "*.xn*", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                if (!file.Contains("ncp"))
+                {
+                    Console.WriteLine(file);
+                    SegaNNLister xno = new SegaNNLister();
+                    xno.Load(file);
+                    foreach (var entry in xno.nodeNames)
+                    {
+                        if (!nodeNames.Contains(entry))
+                        {
+                            nodeNames.Add(entry);
+                        }
+                    }
+                }
+            }
+
+            Console.Clear();
+            foreach(var entry in nodeNames)
+            {
+                Console.WriteLine(entry);
+            }
+            //SegaNNObject xno = new SegaNNObject();
+            ////xno.Load(@"G:\Sonic '06\Extracted Files\win32\enemy_data\win32\enemy\secondmefiress\en_Kyozoress.xno");
+            ////xno.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\so_itm_sbungle_L.xno");
+            //xno.Load(@"D:\Steam\steamapps\common\Sonic the Hedgehog 4 EP 1\G_COM\PLY\SON_MDL\SON_MODEL.ZNO");
         }
     }
 }

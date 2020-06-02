@@ -8,6 +8,23 @@ using System.Threading.Tasks;
 
 namespace HedgeLib.Models
 {
+    /*XNO Block Types:
+    NXIF
+    NXMO
+    NXTL
+    NXEF
+    NXNN
+    NXOB
+    NXMA
+    NXCA
+    NXMC
+    NXLI
+    NXML
+    NEND
+    NXMM
+    NXMT
+    */
+
     public class NXIF
     {
         public string HeaderInfoNode;
@@ -68,12 +85,19 @@ namespace HedgeLib.Models
         public string NodeName;
     }
 
+    public class NXOB
+    {
+        public string ObjectList;
+        public uint NodeLength;
+    }
+
     public class SegaNNObject : FileBase
     {
         public NXIF InfoList;
         public NXTL TextureList;
         public NXEF EffectList;
         public NXNN NodeTree;
+        public NXOB ObjectList;
         public override void Load(Stream fileStream)
         {
             ExtendedBinaryReader reader = new ExtendedBinaryReader(fileStream) { Offset = 0x20 };
@@ -184,6 +208,35 @@ namespace HedgeLib.Models
             reader.JumpAhead(NodeTree.NodeLength);
 
             // NINJA XBOX OBJECTS [NXOB]
+            ObjectList = new NXOB()
+            {
+                ObjectList = new string(reader.ReadChars(4)),
+                NodeLength = reader.ReadUInt32()
+            };
+
+            pos = reader.BaseStream.Position; //Save Position
+            reader.JumpTo(reader.ReadUInt32() + 4, false);
+            /*
+            Sonic 4 Decompilation Ref
+            public NNS_NODE( AppMain.NNS_NODE node )
+            {
+                this.fType = node.fType;
+                this.iMatrix = node.iMatrix;
+                this.iParent = node.iParent;
+                this.iChild = node.iChild;
+                this.iSibling = node.iSibling;
+                this.Translation.Assign( node.Translation );
+                this.Rotation = node.Rotation;
+                this.Scaling.Assign( node.Scaling );
+                this.InvInitMtx.Assign( node.InvInitMtx );
+                this.Center.Assign( node.Center );
+                this.Radius = node.Radius;
+                this.User = node.User;
+                this.SIIKBoneLength = node.SIIKBoneLength;
+                this.BoundingBoxY = node.BoundingBoxY;
+                this.BoundingBoxZ = node.BoundingBoxZ;
+            }
+            */
 
             // NINJA XBOX MATERIALS [NXMT]
         }
