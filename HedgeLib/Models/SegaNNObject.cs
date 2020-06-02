@@ -101,7 +101,7 @@ namespace HedgeLib.Models
         public override void Load(Stream fileStream)
         {
             ExtendedBinaryReader reader = new ExtendedBinaryReader(fileStream) { Offset = 0x20 };
-
+            long pos = 0;
             // NINJA XBOX INFO [NXIF]
             InfoList = new NXIF()
             {
@@ -112,14 +112,46 @@ namespace HedgeLib.Models
 
             reader.JumpTo(InfoList.NodeLength + 8);
 
-            // NINJA XBOX TEXTURE LIST [NXTL]
+            for(int i = 0; i < InfoList.NodeCount; i++)
+            {
+                string nodeName = new string(reader.ReadChars(4));
+                uint nodeLength = reader.ReadUInt32();
+                reader.JumpBehind(8);
+                switch(nodeName)
+                {
+                    case "NXTL":
+                    case "NGTL":
+                    case "NZTL":
+                        // NINJA XBOX TEXTURE LIST [NXTL]
+                        TextureList = ReadTextureList(reader, pos);
+                        break;
+                    case "NXEF":
+                        // NINJA XBOX EFFECTS [NXEF]
+                        EffectList = ReadEffectList(reader, pos);
+                        break;
+                    case "NXNN":
+                    case "NGNN":
+                        // NINJA XBOX NODE NAMES [NXNN]
+                        NodeTree = ReadNodeNames(reader, pos);
+                        break;
+                    default:
+                        reader.JumpAhead(8);
+                        reader.JumpAhead(nodeLength);
+                        Console.WriteLine($"Block {nodeName} Not Implemented!");
+                        break;
+                }
+            }
+        }
+
+        public NXTL ReadTextureList(ExtendedBinaryReader reader, long pos)
+        {
             TextureList = new NXTL()
             {
                 TextureListNode = new string(reader.ReadChars(4)),
                 NodeLength = reader.ReadUInt32()
             };
 
-            long pos = reader.BaseStream.Position; //Save Position
+            pos = reader.BaseStream.Position; //Save Position
             reader.JumpTo(reader.ReadUInt32(), false);
             TextureList.TextureCount = reader.ReadUInt32();
             uint textureListOffset = reader.ReadUInt32();
@@ -140,8 +172,11 @@ namespace HedgeLib.Models
             }
             reader.JumpTo(pos);
             reader.JumpAhead(TextureList.NodeLength);
+            return TextureList;
+        }
 
-            // NINJA XBOX EFFECTS [NXEF]
+        public NXEF ReadEffectList(ExtendedBinaryReader reader, long pos)
+        {
             EffectList = new NXEF()
             {
                 EffectNode = new string(reader.ReadChars(4)),
@@ -155,7 +190,7 @@ namespace HedgeLib.Models
             var techiqueCount = reader.ReadUInt32();
             var techniqueOffset = reader.ReadUInt32();
             reader.JumpTo(effectTypeOffset, false);
-            for(int i = 0; i < effectTypeCount; i++)
+            for (int i = 0; i < effectTypeCount; i++)
             {
                 EFFFILE effFile = new EFFFILE();
                 effFile.Type = reader.ReadUInt32();
@@ -181,8 +216,11 @@ namespace HedgeLib.Models
             }
             reader.JumpTo(pos);
             reader.JumpAhead(EffectList.NodeLength);
+            return EffectList;
+        }
 
-            // NINJA XBOX NODE NAMES [NXNN]
+        public NXNN ReadNodeNames(ExtendedBinaryReader reader, long pos)
+        {
             NodeTree = new NXNN()
             {
                 TreeNode = new string(reader.ReadChars(4)),
@@ -206,16 +244,11 @@ namespace HedgeLib.Models
             }
             reader.JumpTo(pos);
             reader.JumpAhead(NodeTree.NodeLength);
+            return NodeTree;
+        }
 
-            // NINJA XBOX OBJECTS [NXOB]
-            ObjectList = new NXOB()
-            {
-                ObjectList = new string(reader.ReadChars(4)),
-                NodeLength = reader.ReadUInt32()
-            };
-
-            pos = reader.BaseStream.Position; //Save Position
-            reader.JumpTo(reader.ReadUInt32() + 4, false);
+        public NXOB ReadNodes(ExtendedBinaryReader reader, long pos)
+        {
             /*
             Sonic 4 Decompilation Ref
             public NNS_NODE( AppMain.NNS_NODE node )
@@ -237,8 +270,15 @@ namespace HedgeLib.Models
                 this.BoundingBoxZ = node.BoundingBoxZ;
             }
             */
+            ObjectList = new NXOB()
+            {
+                ObjectList = new string(reader.ReadChars(4)),
+                NodeLength = reader.ReadUInt32()
+            };
 
-            // NINJA XBOX MATERIALS [NXMT]
+            pos = reader.BaseStream.Position; //Save Position
+            reader.JumpTo(reader.ReadUInt32() + 4, false);
+            return ObjectList;
         }
     }
 }
