@@ -89,6 +89,27 @@ namespace HedgeLib.Models
     {
         public string ObjectList;
         public uint NodeLength;
+        public List<Node> Nodes = new List<Node>();
+    }
+
+    public class Node
+    {
+        public uint NODE_TYPE;
+        public ushort NODE_MATRIX;
+        public ushort NODE_PARENT;
+        public ushort NODE_CHILD;
+        public ushort NODE_SIBLING;
+        public List<float> NODE_TRN = new List<float>();
+        public List<float> NODE_ROT = new List<float>();
+        public List<float> NODE_SCL = new List<float>();
+        public List<float> NODE_INVINIT_MTX = new List<float>();
+        public List<float> NODE_CENTER = new List<float>();
+        public float NODE_RADIUS;
+        public uint NODE_USER;
+        public uint NODE_RSV0;
+        public uint NODE_RSV1;
+        public uint NODE_RSV2;
+
     }
 
     public class SegaNNObject : FileBase
@@ -133,6 +154,9 @@ namespace HedgeLib.Models
                     case "NGNN":
                         // NINJA XBOX NODE NAMES [NXNN]
                         NodeTree = ReadNodeNames(reader, pos);
+                        break;
+                    case "NXOB":
+                        ObjectList = ReadNodes(reader, pos);
                         break;
                     default:
                         reader.JumpAhead(8);
@@ -277,7 +301,80 @@ namespace HedgeLib.Models
             };
 
             pos = reader.BaseStream.Position; //Save Position
-            reader.JumpTo(reader.ReadUInt32() + 4, false);
+            reader.JumpTo(reader.ReadUInt32(), false);
+            reader.JumpAhead(0x10);
+            //MaxScript copy paste
+            var TexElmTotal = reader.ReadUInt32();
+            var TexElmOffset = reader.ReadUInt32();
+            var VertGroupTotal = reader.ReadUInt32();
+            var VertGroupOffset = reader.ReadUInt32();
+            var PolyElmTotal = reader.ReadUInt32();
+            var PolyElmOffset = reader.ReadUInt32();
+            var NodeTotal = reader.ReadUInt32();
+            reader.JumpAhead(4); //Probably something to do with Nodes?
+            var NodeOffset = reader.ReadUInt32();
+            var unknown1 = reader.ReadUInt32(); //MaxScript calls this NodeTotal, but I'm sure what they call BoneTotal is actually NodeTotal?
+            var LinkTotal = reader.ReadUInt32();
+            var LinkOffset = reader.ReadUInt32();
+            reader.JumpAhead(4); //MaxScript skips 4 here, then just jumps anyway, so it probably is something we need that it ignores
+
+            reader.JumpTo(TexElmOffset, false);
+            for (int i = 0; i < TexElmTotal; i++)
+            {
+                reader.JumpAhead(4); //MaxScript skips 4 here, probably is something we need that it ignores
+                var TexElmOffInfoOffset = reader.ReadUInt32(); //MaxScript shoves this into an Array, not sure where it gets used
+            }
+
+            reader.JumpTo(PolyElmOffset, false);
+            for (int i = 0; i < PolyElmTotal; i++)
+            {
+                reader.JumpAhead(4); //MaxScript skips 4 here, probably is something we need that it ignores
+                var TexElmOffInfoOffset = reader.ReadUInt32(); //MaxScript shoves this into an Array, not sure where it gets used
+            }
+
+            reader.JumpTo(NodeOffset, false);
+            for (int i = 0; i < NodeTotal; i++)
+            {
+                Node node = new Node();
+                node.NODE_TYPE = reader.ReadUInt32();
+                node.NODE_MATRIX = reader.ReadUInt16();
+                node.NODE_PARENT = reader.ReadUInt16();
+                node.NODE_CHILD = reader.ReadUInt16();
+                node.NODE_SIBLING = reader.ReadUInt16();
+
+                for(int n = 0; n < 3; n++)
+                {
+                    node.NODE_TRN.Add(reader.ReadSingle());
+                }
+
+                for (int n = 0; n < 3; n++)
+                {
+                    node.NODE_ROT.Add(reader.ReadSingle());
+                }
+
+                for (int n = 0; n < 3; n++)
+                {
+                    node.NODE_SCL.Add(reader.ReadSingle());
+                }
+
+                for (int n = 0; n < 16; n++)
+                {
+                    node.NODE_INVINIT_MTX.Add(reader.ReadSingle());
+                }
+
+                for (int n = 0; n < 3; n++)
+                {
+                    node.NODE_CENTER.Add(reader.ReadSingle());
+                }
+
+                node.NODE_RADIUS = reader.ReadSingle();
+                node.NODE_USER = reader.ReadUInt32();
+                node.NODE_RSV0 = reader.ReadUInt32();
+                node.NODE_RSV1 = reader.ReadUInt32();
+                node.NODE_RSV2 = reader.ReadUInt32();
+                ObjectList.Nodes.Add(node);
+            }
+
             return ObjectList;
         }
     }
