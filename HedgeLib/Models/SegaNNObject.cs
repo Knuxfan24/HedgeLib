@@ -109,7 +109,15 @@ namespace HedgeLib.Models
         public uint NODE_RSV0;
         public uint NODE_RSV1;
         public uint NODE_RSV2;
+    }
 
+    public class MaterialColour
+    {
+        public List<float> MAT_DIFFUSE = new List<float>();
+        public List<float> MAT_AMBIENT = new List<float>();
+        public List<float> MAT_SPECULAR = new List<float>();
+        public List<float> MAT_EMISSIVE = new List<float>();
+        public float MAT_POWER;
     }
 
     public class SegaNNObject : FileBase
@@ -304,35 +312,27 @@ namespace HedgeLib.Models
             pos = reader.BaseStream.Position; //Save Position
             reader.JumpTo(reader.ReadUInt32(), false);
             reader.JumpAhead(0x10);
-            //MaxScript copy paste
+
+            //Variable Names Copy & Pasted from MaxScript
             var TexElmTotal = reader.ReadUInt32();
             var TexElmOffset = reader.ReadUInt32();
+
             var VertGroupTotal = reader.ReadUInt32();
             var VertGroupOffset = reader.ReadUInt32();
+
             var PolyElmTotal = reader.ReadUInt32();
             var PolyElmOffset = reader.ReadUInt32();
+
             var NodeTotal = reader.ReadUInt32();
-            reader.JumpAhead(4); //Probably something to do with Nodes?
+            var UnknownCount1 = reader.ReadUInt32(); //Count of SOMETHING?
             var NodeOffset = reader.ReadUInt32();
-            var unknown1 = reader.ReadUInt32(); //MaxScript calls this NodeTotal, but I'm sure what they call BoneTotal is actually NodeTotal?
+
+            var UnknownCount2 = reader.ReadUInt32(); //MaxScript calls this NodeTotal, but I'm sure what they call BoneTotal is actually NodeTotal? Seems to be a Count of something
             var LinkTotal = reader.ReadUInt32();
             var LinkOffset = reader.ReadUInt32();
-            reader.JumpAhead(4); //MaxScript skips 4 here, then just jumps anyway, so it probably is something we need that it ignores
+            var UnknownCount3 = reader.ReadUInt32(); //Count of SOMETHING?
 
-            reader.JumpTo(TexElmOffset, false);
-            for (int i = 0; i < TexElmTotal; i++)
-            {
-                reader.JumpAhead(4); //MaxScript skips 4 here, probably is something we need that it ignores
-                var TexElmOffInfoOffset = reader.ReadUInt32(); //MaxScript shoves this into an Array, not sure where it gets used
-            }
-
-            reader.JumpTo(PolyElmOffset, false);
-            for (int i = 0; i < PolyElmTotal; i++)
-            {
-                reader.JumpAhead(4); //MaxScript skips 4 here, probably is something we need that it ignores
-                var TexElmOffInfoOffset = reader.ReadUInt32(); //MaxScript shoves this into an Array, not sure where it gets used
-            }
-
+            //NNS_NODE
             reader.JumpTo(NodeOffset, false);
             for (int i = 0; i < NodeTotal; i++)
             {

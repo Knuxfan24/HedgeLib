@@ -99,9 +99,17 @@ namespace HedgeTest
             //    Console.WriteLine(entry);
             //}
             SegaNNObject xno = new SegaNNObject();
-            //xno.Load(@"G:\Sonic '06\Extracted Files\win32\enemy_data\win32\enemy\secondmefiress\en_Kyozoress.xno");
+
+            //Sonic '06
+            xno.Load(@"G:\Sonic '06\Extracted Files\win32\enemy_data\win32\enemy\secondmefiress\en_Kyozoress.xno");
             //xno.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\so_itm_sbungle_L.xno");
-            xno.Load(@"D:\Steam\steamapps\common\Sonic the Hedgehog 4 EP 1\G_COM\PLY\SON_MDL\SON_MODEL.ZNO");
+            //xno.Load(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\17553\wvjktqer.j0d\player_sonic\win32\player\sonic_new\sonic_Root.xno");
+
+            //Sonic 4: Episode 1
+            //xno.Load(@"D:\Steam\steamapps\common\Sonic the Hedgehog 4 EP 1\G_COM\PLY\SON_MDL\SON_MODEL.ZNO");
+
+            //Sonic Riders
+            //xno.Load(@"G:\v.xno");
         }
     }
 }
