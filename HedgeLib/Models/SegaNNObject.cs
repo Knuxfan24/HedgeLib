@@ -156,6 +156,7 @@ namespace HedgeLib.Models
                         NodeTree = ReadNodeNames(reader, pos);
                         break;
                     case "NXOB":
+                    case "NZOB":
                         ObjectList = ReadNodes(reader, pos);
                         break;
                     default:

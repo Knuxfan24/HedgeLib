@@ -140,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="Models\en_Kyozoress.xto" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Models\S06XnFile.h" />
