@@ -98,10 +98,10 @@ namespace HedgeTest
             //{
             //    Console.WriteLine(entry);
             //}
-            SegaNNObject xno = new SegaNNObject();
+            //SegaNNObject xno = new SegaNNObject();
 
             //Sonic '06
-            xno.Load(@"G:\Sonic '06\Extracted Files\win32\enemy_data\win32\enemy\secondmefiress\en_Kyozoress.xno");
+            //xno.Load(@"G:\Sonic '06\Extracted Files\win32\enemy_data\win32\enemy\secondmefiress\en_Kyozoress.xno");
             //xno.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\so_itm_sbungle_L.xno");
             //xno.Load(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\17553\wvjktqer.j0d\player_sonic\win32\player\sonic_new\sonic_Root.xno");
 
@@ -110,6 +110,18 @@ namespace HedgeTest
 
             //Sonic Riders
             //xno.Load(@"G:\v.xno");
+
+            //Sonic Unwiished (GNO doesn't work right now)
+            //xno.Load(@"G:\Sonic Unleashed\Wii\Game Dump\one_wii_lUS\load_main_game\common\Extracted Files\cmn_sv_super\Extracted Files\ssonic_always\Extracted Files\ssonic_model\Extracted Files\sonic_model_default\sonic.gno");
+            NNFooterList list = new NNFooterList();
+            list.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\so_itm_sbungle_L.xno");
+            Console.WriteLine($"{list.Offsets.Count} Offsets in Footer, pointing to:");
+            foreach(var entry in list.Offsets)
+            {
+                Console.WriteLine("{0:X}", entry);
+            }
+            Console.WriteLine("\n(0x20 offset already accounted for!");
+            Console.ReadKey();
         }
     }
 }

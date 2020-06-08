@@ -106,6 +106,7 @@ namespace HedgeLib.Models
         public List<float> NODE_CENTER = new List<float>();
         public float NODE_RADIUS;
         public uint NODE_USER;
+        //Replaced with Bounding Box in Model Node? Which are floats rather than uints. The frick
         public uint NODE_RSV0;
         public uint NODE_RSV1;
         public uint NODE_RSV2;
@@ -129,9 +130,10 @@ namespace HedgeLib.Models
         public NXOB ObjectList;
         public override void Load(Stream fileStream)
         {
+            bool isGNO = false;
             ExtendedBinaryReader reader = new ExtendedBinaryReader(fileStream) { Offset = 0x20 };
             long pos = 0;
-            // NINJA XBOX INFO [NXIF]
+            // NINJA INFO [N*IF]
             InfoList = new NXIF()
             {
                 HeaderInfoNode = new string(reader.ReadChars(4)),
@@ -149,18 +151,16 @@ namespace HedgeLib.Models
                 switch(nodeName)
                 {
                     case "NXTL":
-                    case "NGTL":
                     case "NZTL":
-                        // NINJA XBOX TEXTURE LIST [NXTL]
+                        // NINJA TEXTURE LIST [N*TL]
                         TextureList = ReadTextureList(reader, pos);
                         break;
                     case "NXEF":
-                        // NINJA XBOX EFFECTS [NXEF]
+                        // NINJA EFFECTS [N*EF]
                         EffectList = ReadEffectList(reader, pos);
                         break;
                     case "NXNN":
-                    case "NGNN":
-                        // NINJA XBOX NODE NAMES [NXNN]
+                        // NINJA NODE NAMES [N*NN]
                         NodeTree = ReadNodeNames(reader, pos);
                         break;
                     case "NXOB":
@@ -323,6 +323,7 @@ namespace HedgeLib.Models
             var PolyElmTotal = reader.ReadUInt32();
             var PolyElmOffset = reader.ReadUInt32();
 
+            //Nodes
             var NodeTotal = reader.ReadUInt32();
             var UnknownCount1 = reader.ReadUInt32(); //Count of SOMETHING?
             var NodeOffset = reader.ReadUInt32();
@@ -375,6 +376,10 @@ namespace HedgeLib.Models
                 node.NODE_RSV2 = reader.ReadUInt32();
                 ObjectList.Nodes.Add(node);
             }
+
+            reader.JumpTo(TexElmOffset, false);
+            var Unknown1 = reader.ReadUInt32(); //Assume this is a count???
+            reader.JumpTo(reader.ReadUInt32(), false);
 
             return ObjectList;
         }

@@ -72,7 +72,7 @@
     <Compile Include="Misc\S06Path.cs" />
     <Compile Include="Misc\S06Prop.cs" />
     <Compile Include="Misc\S06Props.cs" />
-    <Compile Include="Models\SegaNNLister.cs" />
+    <Compile Include="Models\NNFooterList.cs" />
     <Compile Include="Models\SegaNNObject.cs" />
     <Compile Include="Terrain\S06Collision.cs" />
     <Compile Include="RFL\ForcesCaptionParam.cs" />
