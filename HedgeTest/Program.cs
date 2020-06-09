@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HedgeLib.Models;
 using System.IO;
+using HedgeLib.Havok;
 
 namespace HedgeTest
 {
@@ -12,8 +13,10 @@ namespace HedgeTest
     {
         static void Main(string[] args)
         {
-            List<string> nodeNames = new List<string>();
-            //nodeNames.Add("GN* Entries:");
+            HavokFile test = new HavokFile();
+            test.Load(@"G:\Sonic '06\Extracted Files\xenon\object\xenon\object\wvo\parasol\wvo_obj_parasolA.hkx");
+            //List<string> nodeNames = new List<string>();
+            //nodeNames.Add("GN * Entries:");
             //var files = Directory.GetFiles(@"G:\Sonic Unleashed\Wii\Game Dump", "*.gn*", SearchOption.AllDirectories);
             //foreach (var file in files)
             //{
@@ -113,15 +116,15 @@ namespace HedgeTest
 
             //Sonic Unwiished (GNO doesn't work right now)
             //xno.Load(@"G:\Sonic Unleashed\Wii\Game Dump\one_wii_lUS\load_main_game\common\Extracted Files\cmn_sv_super\Extracted Files\ssonic_always\Extracted Files\ssonic_model\Extracted Files\sonic_model_default\sonic.gno");
-            NNFooterList list = new NNFooterList();
-            list.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\so_itm_sbungle_L.xno");
-            Console.WriteLine($"{list.Offsets.Count} Offsets in Footer, pointing to:");
-            foreach(var entry in list.Offsets)
-            {
-                Console.WriteLine("{0:X}", entry);
-            }
-            Console.WriteLine("\n(0x20 offset already accounted for!");
-            Console.ReadKey();
+            //NNFooterList list = new NNFooterList();
+            //list.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\so_itm_sbungle_L.xno");
+            //Console.WriteLine($"{list.Offsets.Count} Offsets in Footer, pointing to:");
+            //foreach(var entry in list.Offsets)
+            //{
+            //    Console.WriteLine("{0:X}", entry);
+            //}
+            //Console.WriteLine("\n(0x20 offset already accounted for!");
+            //Console.ReadKey();
         }
     }
 }

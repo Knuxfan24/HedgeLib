@@ -74,6 +74,7 @@
     <Compile Include="Misc\S06Props.cs" />
     <Compile Include="Models\NNFooterList.cs" />
     <Compile Include="Models\SegaNNObject.cs" />
+    <Compile Include="Terrain\fxcol.cs" />
     <Compile Include="Terrain\S06Collision.cs" />
     <Compile Include="RFL\ForcesCaptionParam.cs" />
     <Compile Include="RFL\ForcesDLCParam.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Terrain\GensTerrainInstanceInfo.cs" />
     <Compile Include="Terrain\GensTerrainList.cs" />
     <Compile Include="Terrain\S06ReflectionZone.cs" />
+    <Compile Include="Terrain\svcol.cs" />
     <Compile Include="Textures\DDS.cs" />
     <Compile Include="Textures\GensTexset.cs" />
     <Compile Include="Textures\GensTexture.cs" />

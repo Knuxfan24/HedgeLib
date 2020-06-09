@@ -130,7 +130,6 @@ namespace HedgeLib.Models
         public NXOB ObjectList;
         public override void Load(Stream fileStream)
         {
-            bool isGNO = false;
             ExtendedBinaryReader reader = new ExtendedBinaryReader(fileStream) { Offset = 0x20 };
             long pos = 0;
             // NINJA INFO [N*IF]
