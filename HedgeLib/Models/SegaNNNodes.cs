@@ -112,13 +112,13 @@ namespace HedgeLib.Models
         public uint Type;
         public uint VTXFormat;
         public uint VTXFVF;
-        public uint VTXStride;
+        public uint VTXSize;
         public List<NinjaObjectVertexList> Vertexes = new List<NinjaObjectVertexList>();
         public uint VTXBlendNum;
         public uint VTXHDRCommon;
         public uint VTXHDRData;
         public uint VTXHDRLock;
-        public uint VTXMTX;
+        public int VTXMTX;
     }
     public class NinjaObjectVertexList
     {
@@ -127,7 +127,10 @@ namespace HedgeLib.Models
         public byte[] MTXIDX;
         public Vector3 Normals;
         public byte[] RGBA8888;
-        public Vector3 ST0;
+        public Vector2 ST0;
+        public Vector3 Tan;
+        public Vector3 BNormal;
+        public Vector2 UnknownV2;
     }
     public class NinjaObjectPrimitive
     {

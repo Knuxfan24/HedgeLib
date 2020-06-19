@@ -53,7 +53,7 @@ namespace HedgeLib.Models
                     default:
                         reader.JumpAhead(8);
                         reader.JumpAhead(NextNodeLength);
-                        Console.WriteLine($"Block {NextNodeName} Not Implemented!");
+                        //Console.WriteLine($"Block {NextNodeName} Not Implemented!");
                         break;
                 }
             }
@@ -263,7 +263,7 @@ namespace HedgeLib.Models
                 reader.JumpTo(VTXOffset, false);
                 ObjectVertex.VTXFormat = reader.ReadUInt32();
                 ObjectVertex.VTXFVF = reader.ReadUInt32();
-                ObjectVertex.VTXStride = reader.ReadUInt32();
+                ObjectVertex.VTXSize = reader.ReadUInt32();
                 uint VTXNumber = reader.ReadUInt32();
                 uint VTXListOffset = reader.ReadUInt32();
                 ObjectVertex.VTXBlendNum = reader.ReadUInt32();
@@ -276,17 +276,105 @@ namespace HedgeLib.Models
                 for (int v = 0; v < VTXNumber; v++)
                 {
                     NinjaObjectVertexList Vertex = new NinjaObjectVertexList();
-                    Vertex.Position = reader.ReadVector3();
-                    Vertex.Weight3 = reader.ReadVector3();
-                    Vertex.MTXIDX = reader.ReadBytes(4);
-                    Vertex.Normals = reader.ReadVector3();
-                    Vertex.RGBA8888 = reader.ReadBytes(4);
-                    Vertex.ST0 = reader.ReadVector3();
-                    ObjectVertex.Vertexes.Add(Vertex);
+                    switch (ObjectVertex.VTXSize)
+                    {
+                        //Any ones other than 52 & 76 are probably wrong here, as they're not in the XTO and are instead based on the MaxScript
+                        //This is such a mess
+                        case 20:
+                            Vertex.Position = reader.ReadVector3();
+                            Vertex.ST0 = reader.ReadVector2();
+                            ObjectVertex.Vertexes.Add(Vertex);
+                            break;
+                        case 24:
+                            Vertex.Position = reader.ReadVector3();
+                            Vertex.RGBA8888 = reader.ReadBytes(4);
+                            Vertex.ST0 = reader.ReadVector2();
+                            ObjectVertex.Vertexes.Add(Vertex);
+                            break;
+                        case 28:
+                            Vertex.Position = reader.ReadVector3();
+                            Vertex.Normals = reader.ReadVector3();
+                            Vertex.RGBA8888 = reader.ReadBytes(4);
+                            ObjectVertex.Vertexes.Add(Vertex);
+                            break;
+                        case 32:
+                            Vertex.Position = reader.ReadVector3();
+                            Vertex.Normals = reader.ReadVector3();
+                            Vertex.ST0 = reader.ReadVector2();
+                            ObjectVertex.Vertexes.Add(Vertex);
+                            break;
+                        case 36:
+                            Vertex.Position = reader.ReadVector3();
+                            Vertex.Normals = reader.ReadVector3();
+                            Vertex.RGBA8888 = reader.ReadBytes(4);
+                            Vertex.ST0 = reader.ReadVector2();
+                            ObjectVertex.Vertexes.Add(Vertex);
+                            break;
+                        case 44:
+                            Vertex.Position = reader.ReadVector3();
+                            Vertex.Normals = reader.ReadVector3();
+                            Vertex.RGBA8888 = reader.ReadBytes(4);
+                            Vertex.ST0 = reader.ReadVector2();
+                            Vertex.UnknownV2 = reader.ReadVector2();
+                            ObjectVertex.Vertexes.Add(Vertex);
+                            break;
+                        case 48:
+                            Vertex.Position = reader.ReadVector3();
+                            Vertex.Weight3 = reader.ReadVector3();
+                            Vertex.Normals = reader.ReadVector3();
+                            Vertex.RGBA8888 = reader.ReadBytes(4);
+                            Vertex.ST0 = reader.ReadVector2();
+                            ObjectVertex.Vertexes.Add(Vertex);
+                            break;
+                        case 52:
+                            Vertex.Position = reader.ReadVector3();
+                            Vertex.Weight3 = reader.ReadVector3();
+                            Vertex.MTXIDX = reader.ReadBytes(4);
+                            Vertex.Normals = reader.ReadVector3();
+                            Vertex.RGBA8888 = reader.ReadBytes(4);
+                            Vertex.ST0 = reader.ReadVector2();
+                            ObjectVertex.Vertexes.Add(Vertex);
+                            break;
+                        case 60:
+                            Vertex.Position = reader.ReadVector3();
+                            Vertex.Weight3 = reader.ReadVector3();
+                            Vertex.Normals = reader.ReadVector3();
+                            Vertex.Tan = reader.ReadVector3();
+                            Vertex.BNormal = reader.ReadVector3();
+                            ObjectVertex.Vertexes.Add(Vertex);
+                            break;
+                        case 72:
+                            Vertex.Position = reader.ReadVector3();
+                            Vertex.Weight3 = reader.ReadVector3();
+                            Vertex.MTXIDX = reader.ReadBytes(4);
+                            Vertex.Normals = reader.ReadVector3();
+                            Vertex.ST0 = reader.ReadVector2();
+                            Vertex.Tan = reader.ReadVector3();
+                            Vertex.BNormal = reader.ReadVector3();
+                            ObjectVertex.Vertexes.Add(Vertex);
+                            break;
+                        case 76:
+                            Vertex.Position = reader.ReadVector3();
+                            Vertex.Weight3 = reader.ReadVector3();
+                            Vertex.MTXIDX = reader.ReadBytes(4);
+                            Vertex.Normals = reader.ReadVector3();
+                            Vertex.RGBA8888 = reader.ReadBytes(4);
+                            Vertex.ST0 = reader.ReadVector2();
+                            Vertex.Tan = reader.ReadVector3();
+                            Vertex.BNormal = reader.ReadVector3();
+                            ObjectVertex.Vertexes.Add(Vertex);
+                            break;
+                        default:
+                            Console.WriteLine($"Vertex Size of {ObjectVertex.VTXSize} not handled!");
+                            continue;
+                    }
                 }
 
-                reader.JumpTo(VTXMTXOffset, false);
-                ObjectVertex.VTXMTX = reader.ReadUInt32();
+                if (VTXMTXOffset != 0)
+                {
+                    reader.JumpTo(VTXMTXOffset, false);
+                    ObjectVertex.VTXMTX = reader.ReadInt32();
+                }
 
                 reader.JumpTo(currentPos, true);
                 NinjaObject.ObjectVertexList.Add(ObjectVertex);
@@ -315,7 +403,7 @@ namespace HedgeLib.Models
                 {
                     ObjectPrimitive.VertexIndexList.Add(reader.ReadUInt16());
                 }
-
+                
                 reader.JumpTo(currentPos, true);
                 NinjaObject.ObjectPrimitiveList.Add(ObjectPrimitive);
             }
@@ -370,6 +458,8 @@ namespace HedgeLib.Models
                     };
                     NinjaObject.ObjectSubObjectList.Add(SubObject);
                 }
+
+                reader.JumpTo(currentPos, true);
             }
 
             reader.JumpTo(pos, true);

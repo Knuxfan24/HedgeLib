@@ -81,33 +81,33 @@ namespace HedgeTest
             //    }
             //}
 
-            var files = Directory.GetFiles(@"G:\Sonic '06\Extracted Files", "*.xno", SearchOption.AllDirectories);
-            foreach (var file in files)
-            {
-                if (!file.Contains("ncp"))
-                {
-                    SegaNN xno = new SegaNN();
-                    try
-                    {
-                        xno.Load(file);
-                        Console.WriteLine(file);
-                    }
-                    catch
-                    {
-                        Console.WriteLine($"{file} errored out");
-                    }
-                    //if (xno.EffectList != null)
-                    //{
-                    //    foreach (var entry in xno.EffectList.Techs)
-                    //    {
-                    //        if (!nodeNames.Contains(entry.Filename))
-                    //        {
-                    //            nodeNames.Add(entry.Filename);
-                    //        }
-                    //    }
-                    //}
-                }
-            }
+            //var files = Directory.GetFiles(@"G:\Sonic '06\Extracted Files", "*.xno", SearchOption.AllDirectories);
+            //foreach (var file in files)
+            //{
+            //    if (!file.Contains("ncp"))
+            //    {
+            //        SegaNN xno = new SegaNN();
+            //        //try
+            //        //{
+            //        Console.WriteLine(file);
+            //        xno.Load(file);
+            //        //}
+            //        //catch
+            //        //{
+            //        //    Console.WriteLine($"{file} errored out");
+            //        //}
+            //        //if (xno.EffectList != null)
+            //        //{
+            //        //    foreach (var entry in xno.EffectList.Techs)
+            //        //    {
+            //        //        if (!nodeNames.Contains(entry.Filename))
+            //        //        {
+            //        //            nodeNames.Add(entry.Filename);
+            //        //        }
+            //        //    }
+            //        //}
+            //    }
+            //}
 
 
             //Console.Clear();
@@ -116,17 +116,20 @@ namespace HedgeTest
             //{
             //    Console.WriteLine(entry);
             //}
-            //SegaNN xno = new SegaNN();
+            SegaNN xno = new SegaNN();
 
             //Sonic '06
             //xno.Load(@"G:\Sonic '06\Extracted Files\win32\stage_csc_a\win32\stage\csc\a\csc_mapA_build01_lv2_.xno");
             //xno.Load(@"G:\Sonic '06\Extracted Files\win32\stage_csc_c\win32\stage\csc\c\csc_mapC_turbulence01_nos_.xno");
             //xno.Load(@"G:\Sonic '06\Extracted Files\win32\enemy_data\win32\enemy\secondmefiress\en_Kyozoress.xno");
+            //xno.Load(@"G:\Sonic '06\Extracted Files\win32\enemy_data\win32\enemy\eCerberus\en_ecbc_HeadArmor.xno");
             //xno.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\so_itm_sbungle_L.xno");
             //xno.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\sonic_Root.xno");
+            //xno.Load(@"G:\Sonic '06\Extracted Files\win32\enemy_data\win32\enemy\eWyvern\en_ewv_Head.xno");
+            //xno.Load(@"G:\Sonic '06\Extracted Files\win32\event_data\win32\event\e0028\eve_obj_hangararm.xno");
 
             //Sonic 4: Episode 1
-            //xno.Load(@"D:\Steam\steamapps\common\Sonic the Hedgehog 4 EP 1\G_COM\PLY\SON_MDL\SON_MODEL.ZNO");
+            xno.Load(@"D:\Steam\steamapps\common\Sonic the Hedgehog 4 EP 1\G_COM\PLY\SON_MDL\SON_MODEL.ZNO");
 
             //Sonic Riders
             //xno.Load(@"G:\v.xno");
