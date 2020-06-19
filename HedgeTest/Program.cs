@@ -81,14 +81,21 @@ namespace HedgeTest
             //    }
             //}
 
-            //var files = Directory.GetFiles(@"G:\Sonic '06\Extracted Files", "*.xn*", SearchOption.AllDirectories);
-            //foreach (var file in files)
-            //{
-            //    if (!file.Contains("ncp"))
-            //    {
-            //        Console.WriteLine(file);
-            //        SegaNN xno = new SegaNN();
-            //        xno.Load(file);
+            var files = Directory.GetFiles(@"G:\Sonic '06\Extracted Files", "*.xno", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                if (!file.Contains("ncp"))
+                {
+                    SegaNN xno = new SegaNN();
+                    try
+                    {
+                        xno.Load(file);
+                        Console.WriteLine(file);
+                    }
+                    catch
+                    {
+                        Console.WriteLine($"{file} errored out");
+                    }
                     //if (xno.EffectList != null)
                     //{
                     //    foreach (var entry in xno.EffectList.Techs)
@@ -99,8 +106,8 @@ namespace HedgeTest
                     //        }
                     //    }
                     //}
-            //    }
-            //}
+                }
+            }
 
 
             //Console.Clear();
@@ -109,7 +116,7 @@ namespace HedgeTest
             //{
             //    Console.WriteLine(entry);
             //}
-            SegaNN xno = new SegaNN();
+            //SegaNN xno = new SegaNN();
 
             //Sonic '06
             //xno.Load(@"G:\Sonic '06\Extracted Files\win32\stage_csc_a\win32\stage\csc\a\csc_mapA_build01_lv2_.xno");
@@ -119,7 +126,7 @@ namespace HedgeTest
             //xno.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\sonic_Root.xno");
 
             //Sonic 4: Episode 1
-            xno.Load(@"D:\Steam\steamapps\common\Sonic the Hedgehog 4 EP 1\G_COM\PLY\SON_MDL\SON_MODEL.ZNO");
+            //xno.Load(@"D:\Steam\steamapps\common\Sonic the Hedgehog 4 EP 1\G_COM\PLY\SON_MDL\SON_MODEL.ZNO");
 
             //Sonic Riders
             //xno.Load(@"G:\v.xno");
