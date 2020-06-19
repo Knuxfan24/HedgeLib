@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using HedgeLib.Models;
 using System.IO;
 using HedgeLib.Havok;
+using HedgeLib.Terrain;
+using HedgeLib.Sound;
 
 namespace HedgeTest
 {
@@ -13,8 +15,14 @@ namespace HedgeTest
     {
         static void Main(string[] args)
         {
-            HavokFile test = new HavokFile();
-            test.Load(@"G:\Sonic '06\Extracted Files\xenon\object\xenon\object\wvo\parasol\wvo_obj_parasolA.hkx");
+            //S06SBK sbk = new S06SBK();
+            //sbk.ImportXML(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\5019\wnce0acm.ku4\sound\xenon\sound\bgm.xml");
+            //sbk.Save(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\5019\wnce0acm.ku4\sound\xenon\sound\bgm.sbk");
+
+            //S06Collision col = new S06Collision();
+            //col.ImportOBJ(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\56485\nlkbjqqe.xfc\stage\xenon\stage\kdv\c\less_temp.obj");
+            //col.Save(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\56485\nlkbjqqe.xfc\stage\xenon\stage\kdv\c\collision.bin");
+
             //List<string> nodeNames = new List<string>();
             //nodeNames.Add("GN * Entries:");
             //var files = Directory.GetFiles(@"G:\Sonic Unleashed\Wii\Game Dump", "*.gn*", SearchOption.AllDirectories);
@@ -79,18 +87,18 @@ namespace HedgeTest
             //    if (!file.Contains("ncp"))
             //    {
             //        Console.WriteLine(file);
-            //        SegaNNObject xno = new SegaNNObject();
+            //        SegaNN xno = new SegaNN();
             //        xno.Load(file);
-            //        if (xno.EffectList != null)
-            //        {
-            //            foreach (var entry in xno.EffectList.Techs)
-            //            {
-            //                if (!nodeNames.Contains(entry.Filename))
-            //                {
-            //                    nodeNames.Add(entry.Filename);
-            //                }
-            //            }
-            //        }
+                    //if (xno.EffectList != null)
+                    //{
+                    //    foreach (var entry in xno.EffectList.Techs)
+                    //    {
+                    //        if (!nodeNames.Contains(entry.Filename))
+                    //        {
+                    //            nodeNames.Add(entry.Filename);
+                    //        }
+                    //    }
+                    //}
             //    }
             //}
 
@@ -101,15 +109,17 @@ namespace HedgeTest
             //{
             //    Console.WriteLine(entry);
             //}
-            //SegaNNObject xno = new SegaNNObject();
+            SegaNN xno = new SegaNN();
 
             //Sonic '06
+            //xno.Load(@"G:\Sonic '06\Extracted Files\win32\stage_csc_a\win32\stage\csc\a\csc_mapA_build01_lv2_.xno");
+            //xno.Load(@"G:\Sonic '06\Extracted Files\win32\stage_csc_c\win32\stage\csc\c\csc_mapC_turbulence01_nos_.xno");
             //xno.Load(@"G:\Sonic '06\Extracted Files\win32\enemy_data\win32\enemy\secondmefiress\en_Kyozoress.xno");
             //xno.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\so_itm_sbungle_L.xno");
-            //xno.Load(@"C:\Users\Knuxf\AppData\Local\Hyper_Development_Team\Sonic '06 Toolkit\Archives\17553\wvjktqer.j0d\player_sonic\win32\player\sonic_new\sonic_Root.xno");
+            //xno.Load(@"G:\Sonic '06\Extracted Files\win32\player_sonic\win32\player\sonic_new\sonic_Root.xno");
 
             //Sonic 4: Episode 1
-            //xno.Load(@"D:\Steam\steamapps\common\Sonic the Hedgehog 4 EP 1\G_COM\PLY\SON_MDL\SON_MODEL.ZNO");
+            xno.Load(@"D:\Steam\steamapps\common\Sonic the Hedgehog 4 EP 1\G_COM\PLY\SON_MDL\SON_MODEL.ZNO");
 
             //Sonic Riders
             //xno.Load(@"G:\v.xno");
