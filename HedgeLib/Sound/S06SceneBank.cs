@@ -130,10 +130,13 @@ namespace HedgeLib.Sound
             for (int i = 0; i < csbCueCount; i++) { writer.Write(i); }
 
             //Stream Names
-            writer.FillInOffset("streamsOffset", false);
-            for (int i = 0; i < Cues.Count; i++)
+            if(streamCueCount != 0)
             {
-                if (Cues[i].Stream != null) { writer.AddString($"streamOffset{i}", $"{Cues[i].Stream}"); }
+                writer.FillInOffset("streamsOffset", false);
+                for (int i = 0; i < Cues.Count; i++)
+                {
+                    if (Cues[i].Stream != null) { writer.AddString($"streamOffset{i}", $"{Cues[i].Stream}"); }
+                }
             }
 
             writer.FinishWrite(Header);
