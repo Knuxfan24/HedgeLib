@@ -76,6 +76,7 @@
     <Compile Include="Models\SegaNN.cs" />
     <Compile Include="Models\SegaNNNodes.cs" />
     <Compile Include="Models\SegaNNObject.cs" />
+    <Compile Include="Sound\S06SceneBank.cs" />
     <Compile Include="Terrain\fxcol.cs" />
     <Compile Include="Terrain\S06Collision.cs" />
     <Compile Include="RFL\ForcesCaptionParam.cs" />
@@ -92,7 +93,6 @@
     <Compile Include="Sets\S06SetData.cs" />
     <Compile Include="Sets\ForcesSetData.cs" />
     <Compile Include="Sets\SetGroup.cs" />
-    <Compile Include="Sound\S06SBK.cs" />
     <Compile Include="Sprites\ManiaSprite.cs" />
     <Compile Include="Archives\Archive.cs" />
     <Compile Include="Archives\ArchiveData.cs" />
